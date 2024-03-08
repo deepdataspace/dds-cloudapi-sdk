@@ -1,0 +1,8 @@
+# For local dev
+*.pyc
+/data
+.idea
+/dev.*
+.vscode
+.DS_Store
+.python-version
