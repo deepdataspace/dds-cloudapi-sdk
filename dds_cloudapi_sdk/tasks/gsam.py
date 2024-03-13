@@ -62,6 +62,10 @@ class _GroundedSAMTask(BaseTask):
         }
         return data
 
+    @property
+    def result(self) -> TaskResult:
+        return self._result
+
     def format_result(self, result: dict) -> TaskResult:
         """
         Format the result of the task.

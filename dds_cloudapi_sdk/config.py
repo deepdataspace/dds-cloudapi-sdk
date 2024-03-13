@@ -1,4 +1,5 @@
 import enum
+import os
 
 
 class ServerEnv(enum.Enum):
@@ -13,17 +14,17 @@ class ServerEndpoint(enum.Enum):
     Prd = "api.deepdataspace.com"
 
 
-def _choose_endpoint(env: ServerEnv):
+def _choose_endpoint():
+    env = os.environ.get("DDS_CLOUDAPI_ENV", ServerEnv.Prd)
     map_ = {
         ServerEnv.Dev : ServerEndpoint.Dev,
         ServerEnv.Test: ServerEndpoint.Test,
         ServerEnv.Prd : ServerEndpoint.Prd
     }
-
     return map_[env]
 
 
 class Config:
-    def __init__(self, token: str, env: ServerEnv = ServerEnv.Dev):
-        self.endpoint: ServerEndpoint = _choose_endpoint(env)
+    def __init__(self, token: str):
+        self.endpoint: ServerEndpoint = _choose_endpoint()
         self.token: str = token

@@ -20,6 +20,11 @@ class TaskStatus(enum.Enum):
     Failed = "failed"  # task is failed
 
 
+class LabelTypes(enum.Enum):
+    BBox = "bbox"
+    Mask = "mask"
+
+
 class BaseTask(abc.ABC):
     def __init__(self):
         super().__init__()
@@ -28,7 +33,7 @@ class BaseTask(abc.ABC):
         self.task_uuid = None
         self.status = None
         self.error = None
-        self.result: Union[pydantic.BaseModel, None] = None
+        self._result = None
 
     @property
     @abc.abstractmethod
@@ -42,6 +47,11 @@ class BaseTask(abc.ABC):
 
     @abc.abstractmethod
     def format_result(self, result: dict) -> pydantic.BaseModel:
+        raise NotImplementedError
+
+    @property
+    @abc.abstractmethod
+    def result(self):
         raise NotImplementedError
 
     @property
@@ -85,7 +95,7 @@ class BaseTask(abc.ABC):
         self.status = TaskStatus(task_data["status"])
         if self.status == TaskStatus.Success:
             result = task_data["result"]
-            self.result = self.format_result(result)
+            self._result = self.format_result(result)
         elif self.status == TaskStatus.Failed:
             self.error = task_data["error"]
 
