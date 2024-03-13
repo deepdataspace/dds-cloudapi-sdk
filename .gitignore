@@ -2,7 +2,9 @@
 *.pyc
 /data
 .idea
+dist
 /dev.*
 .vscode
 .DS_Store
 .python-version
+dds_cloudapi_sdk.egg-info

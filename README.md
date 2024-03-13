@@ -1,5 +1,26 @@
 # dds-cloudapi-sdk
-The python SDK for calling the DDS Cloud API.
+
+
+---
+
+<div align="center">
+<p align="center">
+
+<!-- prettier-ignore -->
+**The Python SDK for calling the DDS Cloud API.**
+---
+
+<!-- prettier-ignore -->
+
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![PyPI python](https://img.shields.io/pypi/pyversions/dds-cloudapi-sdk)](https://pypi.org/project/dds-cloudapi-sdk)
+[![PyPI version](https://img.shields.io/pypi/v/dds-cloudapi-sdk)](https://pypi.org/project/dds-cloudapi-sdk)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/dds-cloudapi-sdk)
+
+</p>
+</div>
+
+---
 
 ## 1. Installation
 ```bash
