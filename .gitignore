@@ -2,9 +2,14 @@
 *.pyc
 /data
 .idea
-dist
 /dev.*
 .vscode
 .DS_Store
 .python-version
+
+# For package building
+dist
 dds_cloudapi_sdk.egg-info
+
+# For doc generation
+docs/build

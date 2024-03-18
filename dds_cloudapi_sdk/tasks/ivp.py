@@ -1,5 +1,14 @@
+"""
+Interactive Visual Prompting (iVP) is an interactive object detection and counting system based on the T-Rex model independently developed by the IDEA CVR team.
+
+It enables object detection and counting through visual prompts without any training, truly realizing a single visual model applicable to multiple scenarios.
+
+It particularly excels in counting objects in dense or overlapping scenes.
+
+This algorithm is available in DDS CloudAPI SDK through IVPTask.
+"""
+
 from io import BytesIO
-from typing import Any
 from typing import List
 from typing import Tuple
 
@@ -14,40 +23,61 @@ from dds_cloudapi_sdk.tasks.prompt import RectPrompt
 
 
 class IVPObjectMask(pydantic.BaseModel):
-    counts: str
-    size: List[int] = None
+    """
+    | The mask detected by IVP task.
+    | It's a format borrow COCO which compressing the mask image array in RLE format.
+    | You can restore it back to a png image array by :func:`IVPTask.rle2rgba <dds_cloudapi_sdk.tasks.ivp.IVPTask.rle2rgba>`:
 
-    def model_post_init(self, __context: Any) -> None:
-        pass
+    :param counts: the compressed mask array in RLE format
+    :param size: the 2d size of the array, (h, w)
+    """
+
+    counts: str  #: the compressed mask array in RLE format
+    size: Tuple[int, int]  #: the 2d size of the array, (h, w)
 
 
 class IVPObject(pydantic.BaseModel):
-    score: float
-    bbox: List[float] = None
-    mask: IVPObjectMask = None
+    """
+    The object detected by IVP task.
+
+    :param score: the prediction score
+    :param bbox: the bounding box, [upper_left_x, upper_left_y, lower_right_x, lower_right_y]
+    :param mask: the detected :class:`Mask <dds_cloudapi_sdk.tasks.ivp.IVPObjectMask>` object
+    """
+
+    score: float  # : the prediction score
+    bbox: List[float] = None  #: the bounding box, [upper_left_x, upper_left_y, lower_right_x, lower_right_y]
+    mask: IVPObjectMask = None  #: the detected :class:`Mask <dds_cloudapi_sdk.tasks.ivp.IVPObjectMask>` object
 
 
 class TaskResult(pydantic.BaseModel):
+    """
+    The task result of IVP task.
+
+    :param mask_url: an image url with all objects' mask drawn on
+    :param objects: a list of detected objects of :class:`IVPObject <dds_cloudapi_sdk.tasks.ivp.IVPObject>`
+    """
+
     mask_url: str = None
     objects: List[IVPObject] = []
 
 
 class IVPTask(BaseTask):
+    """
+    Trigger the Interactive Visual Prompting algorithm.
+
+    :param prompt_image_url: the image the prompts are acting on.
+    :param prompts: list of :class:`RectPrompt <dds_cloudapi_sdk.tasks.prompt.RectPrompt>` objects which are drawn on the prompt image.
+    :param infer_image_url: the image to be inferred on.
+    :param infer_label_types: list of target :class:`LabelTypes <dds_cloudapi_sdk.base.LabelTypes>` to return.
+    """
+
     def __init__(self,
                  prompt_image_url: str,
                  prompts: List[RectPrompt],
                  infer_image_url: str,
                  infer_label_types: List[LabelTypes],
                  ):
-        """
-        Initialize an IVP task.
-
-        :param prompt_image_url: The image the prompts are acting on. The url muse be public accessible.
-        :param prompts: List of rect prompts which are drawn on the prompt image.
-        :param infer_image_url: The image to be inferred on. The url muse be public accessible.
-        :param infer_label_types: The label types to be inferred, possible values are LabelTypes.BBox and LabelTypes.Mask.
-        """
-
         super().__init__()
 
         self.infer_image = infer_image_url
@@ -75,6 +105,9 @@ class IVPTask(BaseTask):
 
     @property
     def result(self) -> TaskResult:
+        """
+        Get the formatted :class:`TaskResult <dds_cloudapi_sdk.tasks.ivp.TaskResult>` object.
+        """
         return self._result
 
     def get_infer_image_size(self):
@@ -141,15 +174,16 @@ class IVPTask(BaseTask):
 
         return img
 
-    def rle2rgba(self, rle_counts: str, width: int = None, height: int = None) -> Image.Image:
-        if width is None or height is None:
-            width = self.infer_image_width
-            height = self.infer_image_height
+    def rle2rgba(self, mask_obj: IVPObjectMask) -> Image.Image:
+        """
+        Convert the compressed RLE string of mask object to png image object.
+
+        :param mask_obj: The :class:`Mask <dds_cloudapi_sdk.tasks.ivp.IVPObjectMask>` object detected by this task
+        """
 
         # convert rle counts to mask array
-        rle = self.string2rle(rle_counts)
-        shape = (height, width)  # height, width
-        mask_array = self.rle2mask(rle, shape)
+        rle = self.string2rle(mask_obj.counts)
+        mask_array = self.rle2mask(rle, mask_obj.size)
 
         # convert the array to a 4-channel RGBA image
         mask_alpha = np.where(mask_array == 1, 255, 0).astype(np.uint8)
@@ -169,14 +203,18 @@ def test():
     """
     python -m dds_cloudapi_sdk.tasks.ivp
     """
+    import os
+    test_token = os.environ["DDS_CLOUDAPI_TEST_TOKEN"]
 
     import logging
 
     logging.basicConfig(level=logging.INFO)
 
+    from dds_cloudapi_sdk import Config
     from dds_cloudapi_sdk import Client
 
-    client = Client("dds-app-free", )
+    config = Config(test_token)
+    client = Client(config)
     task = IVPTask(
         prompt_image_url="https://dev.deepdataspace.com/static/04_a.ae28c1d6.jpg",
         prompts=[RectPrompt(rect=[475.18413597733706, 550.1983002832861, 548.1019830028329, 599.915014164306])],
@@ -208,7 +246,7 @@ def test():
     print(task.result)
     for obj in task.result.objects:
         if obj.mask is not None:
-            mask = task.rle2rgba(obj.mask.counts)
+            mask = task.rle2rgba(obj.mask)
             mask.save("mask.png")
             break
 
