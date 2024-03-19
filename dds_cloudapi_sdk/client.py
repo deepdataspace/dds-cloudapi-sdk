@@ -1,3 +1,26 @@
+"""
+Client is the main entry point for users to interact with the DDS Cloud API.
+After initializing it with a  :class:`Config <dds_cloudapi_sdk.config.Config>` class, users can use it to upload files,
+trigger tasks, and check for the results.
+
+A simple example illustrating the major interface::
+
+    from dds_cloudapi_sdk import Config
+    from dds_cloudapi_sdk import Client
+
+    token = "Your API Token Here"
+    config = Config(token)
+    client = Client(config)
+
+    # upload local file with client
+    url = client.upload_file("/path/to/local_file.jpg")
+
+    # run a task with client
+    client.run(task)
+    print(task.result)
+
+"""
+
 import os.path
 
 import requests
@@ -11,21 +34,29 @@ __all__ = [
 
 
 class Client:
-    def __init__(self, token: str):
-        """
-        Initialize a client which can be used to call dds cloud APIs.
-        :param token: The API token.
-        """
+    """
+    | This is the SDK client for dds cloud APIs.
+    | It is initialized with the API token, and talks to the server to:
 
-        self.config = Config(token)
+    - 1. upload files to get the visible url
+    - 2. run tasks and wait for the results
+
+    :param config: The :class:`Config <dds_cloudapi_sdk.config.Config>` object.
+
+    """
+
+    def __init__(self, config: Config):
+        self.config = config
 
     def upload_file(self, local_path: str) -> str:
         """
-        upload local image to dds server, return a visible url for calling dds algorithm API.
+        | Upload local file to dds server, return a visible url ready for calling dds cloud API.
+
+        | Although users can trigger tasks with any publicly visible url, uploading file to dds server and use the dds
+         hosted url as task parameter is necessary to conform the network security policy of the DDS server.
+
         :param local_path: The local file path.
         """
-
-        # the token given before
 
         # request our server API to upload the image file
         sign_url = f"https://{self.config.endpoint.value}/upload_signature"
@@ -50,25 +81,34 @@ class Client:
 
     def trigger_task(self, task: BaseTask):
         """
-        Trigger a task.
+        Trigger a task and return immediately without waiting for the result.
+
+        :param task: The task to trigger.
         """
         return task.trigger(self.config)
 
     def check_task(self, task: BaseTask):
         """
-        Check the task status.
+        Check the task's :class:`status <dds_cloudapi_sdk.tasks.base.TaskStatus>`.
+
+        :param task: The task to check.
         """
         return task.check()
 
     def wait_task(self, task: BaseTask):
         """
-        Wait for the task to complete.
-        This blocks the current thread until the task is done.
+        | Wait for the task to complete.
+        | This blocks the current thread until the task is done.
+
+        :param task: The task to wait.
         """
         return task.wait()
 
     def run_task(self, task: BaseTask):
         """
-        Trigger a task and wait for it to complete.
+        | Trigger a task and wait for it to complete.
+        | This blocks the current thread until the task is done.
+
+        :param task: The task to run.
         """
         return task.run(self.config)

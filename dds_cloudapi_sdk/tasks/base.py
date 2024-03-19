@@ -2,7 +2,6 @@ import abc
 import enum
 import logging
 import time
-from typing import Union
 
 import pydantic
 import requests

@@ -1,6 +1,5 @@
 # dds-cloudapi-sdk
 
-
 ---
 
 <div align="center">
@@ -23,23 +22,28 @@
 ---
 
 ## 1. Installation
+
 ```bash
 pip install -U dds-cloudapi-sdk
 ```
 
 ## 2. How to Use
-The following is a simple example of how to use the SDK to call the DDS Cloud API for interactive visual prompt (IVP) tasks.
+
+The following is a simple example of how to use the SDK to call the DDS Cloud API for interactive visual prompt (IVP)
+tasks.
 
 ```python
 # 1. Initialize the client with your API token.
+from dds_cloudapi_sdk import Config
 from dds_cloudapi_sdk import Client
 
 token = "Your API Token Here"
-client = Client(token)
+config = Config(token)
+client = Client(config)
 
 # 2. Optional: Upload local image to the server and get the URL.
-infer_image_url = client.upload_file("data/test_ivp.jpg")
-prompt_image_url = client.upload_file("data/test_ivp.jpg")
+infer_image_url = client.upload_file("path/to/infer/image.jpg")
+prompt_image_url = infer_image_url  # use the same image for prompt
 
 # 3. Create a task with proper parameters.
 from dds_cloudapi_sdk.tasks import IVPTask
@@ -49,10 +53,10 @@ from dds_cloudapi_sdk.tasks import LabelTypes
 task = IVPTask(
     prompt_image_url=prompt_image_url,
     prompts=[
-        RectPrompt(rect=[475.18413597733706, 550.1983002832861, 548.1019830028329, 599.915014164306], is_positive=True)
+        RectPrompt(rect=[475.18, 550.20, 548.10, 599.92], is_positive=True)
     ],
     infer_image_url=infer_image_url,
-    infer_label_types=[LabelTypes.BBox, LabelTypes.Mask],
+    infer_label_types=[LabelTypes.BBox, LabelTypes.Mask],  # infer both bbox and mask
 )
 
 # 4. Run the task and get the result.
@@ -61,12 +65,9 @@ client.run_task(task)
 # 5. Parse the result.
 from dds_cloudapi_sdk.tasks.ivp import TaskResult
 
-print(task.status)
-
 result: TaskResult = task.result
-print(task.result)
 
-mask_url = result.mask_url  # the url with all masks drawn on
+mask_url = result.mask_url  # the image url with all masks drawn on
 objects = result.objects  # the list of detected objects
 for idx, obj in enumerate(objects):
     # get the detection score
@@ -85,15 +86,22 @@ for idx, obj in enumerate(objects):
     # save the image to file
     mask_image.save(f"data/mask_{idx}.png")
 ```
-Please visit the API documentation for more details on how to use the SDK: [DDS CloudAPI SDK Reference](https://dds-cloudapi-sdk-docs.deepdataspace.com)
 
+Please visit the API documentation for more details on how to use the
+SDK: [DDS CloudAPI SDK Reference](https://dds-cloudapi-sdk-docs.deepdataspace.com)
 
 ## 3. Apply for an API Token
-Our API is currently in private beta. Please contact us at [Wei Liu, weiliu@idea.edu.cn](mailto:weiliu@idea.edu.cn) to apply for an API token.  
-We are fully committed to support academic research and education, please feel free to reach out to us for any questions or suggestions.
+
+Our API is currently in private beta. Please contact us at [Wei Liu, weiliu@idea.edu.cn](mailto:weiliu@idea.edu.cn) to
+apply for an API token.  
+We are fully committed to support academic research and education, please feel free to reach out to us for any questions
+or suggestions.
 
 ## 4. License
-This project is released under the [Apache 2.0 License](https://github.com/deepdataspace/dds-cloudapi-sdk/blob/main/LICENSE).
+
+This project is released under
+the [Apache 2.0 License](https://github.com/deepdataspace/dds-cloudapi-sdk/blob/main/LICENSE).
+
 ```text
 Copyright 2023-present, IDEA
 
