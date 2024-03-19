@@ -13,3 +13,4 @@ You can find detailed usage pattern for all tasks from following links.
 
    tasks/gsam
    tasks/ivp
+   tasks/trex_generic

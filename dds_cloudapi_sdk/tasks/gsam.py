@@ -4,7 +4,7 @@ efficiently detect bounding boxes and segmentation masks.
 
 This powerful algorithm is available in DDS CloudAPI SDK in two variants:
 
-- the compact "tiny" model through TinyGSAMTask
+- the "tiny" model through TinyGSAMTask
 - the "base" model through BaseGSAMTask
 """
 
