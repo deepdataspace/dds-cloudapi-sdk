@@ -27,14 +27,8 @@ class ServerEndpoint(enum.Enum):
 
 
 def _choose_endpoint():
-    env = os.environ.get("DDS_CLOUDAPI_ENV", ServerEnv.Prd)
-    env = ServerEnv(env)
-    map_ = {
-        ServerEnv.Dev : ServerEndpoint.Dev,
-        ServerEnv.Test: ServerEndpoint.Test,
-        ServerEnv.Prd : ServerEndpoint.Prd
-    }
-    return map_[env]
+    endpoint = os.environ.get("DDS_CLOUDAPI_ENDPOINT", ServerEndpoint.Prd.value)
+    return endpoint
 
 
 class Config:

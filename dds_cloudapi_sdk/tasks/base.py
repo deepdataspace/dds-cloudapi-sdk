@@ -59,11 +59,11 @@ class BaseTask(abc.ABC):
 
     @property
     def api_trigger_url(self):
-        return f"https://{self.config.endpoint.value}/tasks/{self.api_path}"
+        return f"https://{self.config.endpoint}/tasks/{self.api_path}"
 
     @property
     def api_check_url(self):
-        return f"https://{self.config.endpoint.value}/task_statuses/{self.task_uuid}"
+        return f"https://{self.config.endpoint}/task_statuses/{self.task_uuid}"
 
     def trigger(self, config: Config):
         if self.status is not None:
@@ -116,7 +116,7 @@ class BaseTask(abc.ABC):
                 return
             elif self.status == TaskStatus.Failed:
                 logger.info(f"task {self.task_uuid} is failed")
-                return
+                raise RuntimeError(f"Task {self.task_uuid} is failed, error: {self.error}")
             time.sleep(0.5)
 
     def run(self, config: Config):

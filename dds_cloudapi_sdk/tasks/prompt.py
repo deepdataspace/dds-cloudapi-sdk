@@ -1,6 +1,16 @@
+from enum import Enum
 from typing import List
 
 import pydantic
+
+
+class PromptType(Enum):
+    Rect = "rect"
+    Point = "point"
+    Mask = "mask"
+    Text = "text"
+    Stroke = "stroke"
+    Embd = "embd"
 
 
 class TextPrompt(pydantic.BaseModel):
@@ -19,7 +29,7 @@ class TextPrompt(pydantic.BaseModel):
         """
         constant string 'text' for TextPrompt.
         """
-        return "text"
+        return PromptType.Text.value
 
     def dict(self, **kwargs):
         d = super().dict(**kwargs)
@@ -43,9 +53,33 @@ class RectPrompt(pydantic.BaseModel):
         """
         constant string 'rect' for RectPrompt.
         """
-        return "rect"
+        return PromptType.Rect.value
 
     def dict(self, **kwargs):
         d = super().dict(**kwargs)
         d["type"] = self.type
         return d
+
+
+class BatchPointPrompt(pydantic.BaseModel):
+    """
+    A batch of point prompts.
+
+    :param image: the image url the point prompts are acting on
+    :param points: a list of point locations in [[x1, y1], [x2, y2]]
+    """
+
+    image: str  #: the image url the point prompts are acting on
+    points: List[List[float]]  #: a list of point locations in [[x1, y1], [x2, y2]]
+
+
+class BatchRectPrompt(pydantic.BaseModel):
+    """
+    A batch of rectangle prompts.
+
+    :param image: the image url the rectangle prompts are acting on
+    :param rects: a list of rect locations in [[[upper_left_x, upper_left_y, lower_right_x, lower_right_y], ...]
+    """
+
+    image: str  #: the image url the rectangle prompts are acting on
+    rects: List[List[float]]  #: a list of rect locations in [[[upper_left_x, upper_left_y, lower_right_x, lower_right_y], ...]

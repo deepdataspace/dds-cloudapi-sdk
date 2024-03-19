@@ -8,13 +8,11 @@ It particularly excels in counting objects in dense or overlapping scenes.
 This algorithm is available in DDS CloudAPI SDK through IVPTask.
 """
 
-from io import BytesIO
 from typing import List
 from typing import Tuple
 
 import numpy as np
 import pydantic
-import requests
 from PIL import Image
 
 from dds_cloudapi_sdk.tasks.base import BaseTask
@@ -85,9 +83,6 @@ class IVPTask(BaseTask):
         self.label_types = infer_label_types
         self.prompts = prompts
 
-        self._infer_image_width = None
-        self._infer_image_height = None
-
     @property
     def api_path(self):
         return "ivp"
@@ -109,24 +104,6 @@ class IVPTask(BaseTask):
         Get the formatted :class:`TaskResult <dds_cloudapi_sdk.tasks.ivp.TaskResult>` object.
         """
         return self._result
-
-    def get_infer_image_size(self):
-        if self._infer_image_width is None or self._infer_image_height is None:
-            rsp = requests.get(self.infer_image, timeout=2)
-            img = Image.open(BytesIO(rsp.content))
-            width, height = img.size
-            self._infer_image_width = width
-            self._infer_image_height = height
-
-    @property
-    def infer_image_width(self):
-        self.get_infer_image_size()
-        return self._infer_image_width
-
-    @property
-    def infer_image_height(self):
-        self.get_infer_image_size()
-        return self._infer_image_height
 
     @staticmethod
     def string2rle(rle_str: str) -> List[int]:
