@@ -2,7 +2,7 @@ import os
 
 from setuptools import setup
 
-version = "0.0.2"
+version = "0.0.3"
 
 description = "The SDK for calling deepdataspace cloud API."
 with open("README.md", "r", encoding="utf8") as fp:
