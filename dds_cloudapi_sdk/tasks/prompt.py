@@ -1,6 +1,5 @@
 from enum import Enum
 from typing import List
-from typing import Union
 
 import pydantic
 
@@ -74,7 +73,7 @@ class BatchPointPrompt(pydantic.BaseModel):
     points: List[List[float]]  #: a list of point locations in [[x1, y1], [x2, y2]]
 
     image: str = None  #: the image url the point prompts are acting on
-    category_id: str = None  #: the category id of the rects
+    category_id: int = None  #: the category id of the rects
 
 
 class BatchRectPrompt(pydantic.BaseModel):
@@ -89,18 +88,28 @@ class BatchRectPrompt(pydantic.BaseModel):
     rects: List[List[float]]  #: a list of rect locations in [[[upper_left_x, upper_left_y, lower_right_x, lower_right_y], ...]
 
     image: str = None  #: the image url the rectangle prompts are acting on, if not provided, the infer image url in context will be used
-    category_id: str = None  #: the category id of the rects
+    category_id: int = None  #: the category id of the rects
 
 
-class BatchInfer(pydantic.BaseModel):
+class BatchPointInfer(pydantic.BaseModel):
     """
-    A batch of inferring images with prompts.
+    An infer image with batch point prompts.
 
     :param image: the image url to be inferred on
-    :param prompt_type: the type of the prompts, either :member:`Point <dds_cloudapi_sdk.tasks.prompt.PromptType.Point>` or :member:`Rect <dds_cloudapi_sdk.tasks.prompt.PromptType.Rect>`
-    :param prompts: either a list of :class:`BatchPointPrompt <dds_cloudapi_sdk.tasks.prompt.BatchPointPrompt>` or a list of :class:`BatchRectPrompt <dds_cloudapi_sdk.tasks.prompt.BatchRectPrompt>`, this must match the prompt_type
+    :param prompts: a list of :class:`BatchPointPrompt <dds_cloudapi_sdk.tasks.prompt.BatchPointPrompt>`
     """
 
     image: str  #: the image url to be inferred on
-    prompt_type: PromptType  #: the type of the prompts, either :member:`Point <dds_cloudapi_sdk.tasks.prompt.PromptType.Point>` or :member:`Rect <dds_cloudapi_sdk.tasks.prompt.PromptType.Rect>`
-    prompts: Union[List[BatchPointPrompt], List[BatchRectPrompt]]  # either a list of :class:`BatchPointPrompt <dds_cloudapi_sdk.tasks.prompt.BatchPointPrompt>` or a list of :class:`BatchRectPrompt <dds_cloudapi_sdk.tasks.prompt.BatchRectPrompt>`, this must match the prompt_type
+    prompts: List[BatchPointPrompt]  # a list of :class:`BatchPointPrompt <dds_cloudapi_sdk.tasks.prompt.BatchPointPrompt>`
+
+
+class BatchRectInfer(pydantic.BaseModel):
+    """
+    An infer image with batch rect prompts.
+
+    :param image: the image url to be inferred on
+    :param prompts: a list of :class:`BatchRectPrompt <dds_cloudapi_sdk.tasks.prompt.BatchRectPrompt>`
+    """
+
+    image: str  #: the image url to be inferred on
+    prompts: List[BatchRectPrompt]  # a list of :class:`BatchRectPrompt <dds_cloudapi_sdk.tasks.prompt.BatchRectPrompt>`
