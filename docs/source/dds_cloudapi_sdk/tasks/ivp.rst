@@ -17,7 +17,9 @@ Then trigger the algorithm through IVPTask::
 
     from dds_cloudapi_sdk import Config
     from dds_cloudapi_sdk import Client
-    from dds_cloudapi_sdk import TextPrompt
+    from dds_cloudapi_sdk import IVPTask
+    from dds_cloudapi_sdk import RectPrompt
+    from dds_cloudapi_sdk import LabelTypes
 
     # Step 1: initialize the config
     token = "Your API token here"
@@ -43,7 +45,9 @@ Then trigger the algorithm through IVPTask::
     )
 
     client.run_task(task)
-    print(task.result.mask_url)
+    result = task.result
+
+    print(result.mask_url)
 
     objects = result.objects  # the list of detected objects
     for idx, obj in enumerate(objects):

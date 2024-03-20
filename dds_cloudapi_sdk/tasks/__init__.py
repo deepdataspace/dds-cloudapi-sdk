@@ -25,7 +25,10 @@ from dds_cloudapi_sdk.tasks.gsam import BaseGSAMTask
 from dds_cloudapi_sdk.tasks.gsam import TinyGSAMTask
 from dds_cloudapi_sdk.tasks.ivp import IVPTask
 from dds_cloudapi_sdk.tasks.prompt import *
+from dds_cloudapi_sdk.tasks.trex_embd_customize import TRexEmbdCustomize
+from dds_cloudapi_sdk.tasks.trex_embd_infer import TRexEmbdInfer
 from dds_cloudapi_sdk.tasks.trex_generic import TRexGenericInfer
+from dds_cloudapi_sdk.tasks.trex_interactive import TRexInteractiveInfer
 
 __all__ = [
     "TaskStatus",
@@ -34,8 +37,14 @@ __all__ = [
     "RectPrompt",
     "BatchPointPrompt",
     "BatchRectPrompt",
+    "BatchEmbdPrompt",
+    "BatchRectInfer",
+    "BatchEmbdInfer",
     "IVPTask",
     "TinyGSAMTask",
     "BaseGSAMTask",
     "TRexGenericInfer",
+    "TRexInteractiveInfer",
+    "TRexEmbdCustomize",
+    "TRexEmbdInfer"
 ]
