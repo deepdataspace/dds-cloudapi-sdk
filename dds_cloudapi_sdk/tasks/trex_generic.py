@@ -1,7 +1,7 @@
 """
 The TRex Generic Inference algorithm enables user prompting on multiple images and get the boxes, scores on one target image.
 
-This algorithm hypothesis that there is only one category per batch image and it does not support batch inference.
+This algorithm hypothesis that there is only one category per batch image, and it does not support batch inference.
 
 """
 
