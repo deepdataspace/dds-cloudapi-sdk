@@ -25,8 +25,7 @@ from dds_cloudapi_sdk.tasks.gsam import BaseGSAMTask
 from dds_cloudapi_sdk.tasks.gsam import TinyGSAMTask
 from dds_cloudapi_sdk.tasks.ivp import IVPTask
 from dds_cloudapi_sdk.tasks.prompt import *
-from dds_cloudapi_sdk.tasks.trex_generic import LargeTRexGenericInfer
-from dds_cloudapi_sdk.tasks.trex_generic import TinyTRexGenericInfer
+from dds_cloudapi_sdk.tasks.trex_generic import TRexGenericInfer
 
 __all__ = [
     "TaskStatus",
@@ -38,6 +37,5 @@ __all__ = [
     "IVPTask",
     "TinyGSAMTask",
     "BaseGSAMTask",
-    "TinyTRexGenericInfer",
-    "LargeTRexGenericInfer"
+    "TRexGenericInfer",
 ]
