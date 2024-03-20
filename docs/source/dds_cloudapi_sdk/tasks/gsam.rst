@@ -19,9 +19,10 @@ First of all, make sure you have installed this SDK by pip::
 
 The TinyGSAMTask triggers the Grounded-SAM algorithm with tiny model::
 
-    from dds_cloudapi_sdk import Config
     from dds_cloudapi_sdk import Client
+    from dds_cloudapi_sdk import Config
     from dds_cloudapi_sdk import TextPrompt
+    from dds_cloudapi_sdk import TinyGSAMTask
 
     # Step 1: initialize the config
     token = "Your API token here"
@@ -50,7 +51,6 @@ The TinyGSAMTask triggers the Grounded-SAM algorithm with tiny model::
         print(obj.bbox)  # [653.08, 329.13, 942.05, 842.50]
 
 
-
 BaseGSAMTask
 ~~~~~~~~~~~~
 
@@ -64,6 +64,7 @@ Then trigger the task using the SDK::
     from dds_cloudapi_sdk import Config
     from dds_cloudapi_sdk import Client
     from dds_cloudapi_sdk import TextPrompt
+    from dds_cloudapi_sdk import BaseGSAMTask
 
     # Step 1: initialize the config
     token = "Your API token here"
@@ -90,6 +91,7 @@ Then trigger the task using the SDK::
         print(obj.category)  # iron man
         print(obj.score)  # 0.49
         print(obj.bbox)  # [653.08, 329.13, 942.05, 842.50]
+
 
 API Reference
 -------------

@@ -61,7 +61,7 @@ Here is a simple example of the popular IVP algorithm::
         print(obj.mask.counts)  # ]o`f08fa14M3L2O2M2O1O1O1O1N2O1N2O1N2N3M2O3L3M3N2M2N3N1N2O...
 
         # convert the RLE format to RGBA image
-        mask_image = task.rle2rgba(obj.mask.counts)
+        mask_image = task.rle2rgba(obj.mask)
         print(mask_image.size)  # (1600, 1170)
 
         # save the image to file

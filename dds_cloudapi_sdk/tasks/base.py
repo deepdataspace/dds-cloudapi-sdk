@@ -59,11 +59,11 @@ class BaseTask(abc.ABC):
 
     @property
     def api_trigger_url(self):
-        return f"http://{self.config.endpoint}/tasks/{self.api_path}"
+        return f"https://{self.config.endpoint}/tasks/{self.api_path}"
 
     @property
     def api_check_url(self):
-        return f"http://{self.config.endpoint}/task_statuses/{self.task_uuid}"
+        return f"https://{self.config.endpoint}/task_statuses/{self.task_uuid}"
 
     def trigger(self, config: Config):
         if self.status is not None:

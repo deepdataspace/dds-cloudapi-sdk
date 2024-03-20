@@ -15,10 +15,11 @@ First of all, make sure you have installed this SDK by pip::
 
 Then trigger the algorithm through TRexInteractiveInfer::
 
-    from dds_cloudapi_sdk import Config
     from dds_cloudapi_sdk import Client
+    from dds_cloudapi_sdk import Config
+    from dds_cloudapi_sdk import BatchRectInfer
     from dds_cloudapi_sdk import BatchRectPrompt
-    from dds_cloudapi_sdk import TRexGenericInfer
+    from dds_cloudapi_sdk import TRexInteractiveInfer
 
     # Step 1: initialize the config
     token = "Your API token here"
