@@ -1,7 +1,7 @@
 .. currentmodule:: dds_cloudapi_sdk.tasks.ivp
 
-IVP - InteractiveVisualPrompt
-=============================
+IVP - Interactive Visual Prompt
+===============================
 
 .. automodule:: dds_cloudapi_sdk.tasks.ivp
    :no-members:

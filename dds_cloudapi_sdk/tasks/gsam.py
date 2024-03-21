@@ -188,6 +188,10 @@ def test():
     import os
     test_token = os.environ["DDS_CLOUDAPI_TEST_TOKEN"]
 
+    import logging
+
+    logging.basicConfig(level=logging.INFO)
+
     from dds_cloudapi_sdk import Config
     from dds_cloudapi_sdk import Client
     from dds_cloudapi_sdk import TextPrompt

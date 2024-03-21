@@ -1,6 +1,6 @@
 .. currentmodule:: dds_cloudapi_sdk.tasks.gsam
 
-GSAM - Grounded-SegmentAnyThing
+GSAM - Grounded SegmentAnyThing
 ===============================
 
 .. automodule:: dds_cloudapi_sdk.tasks.gsam

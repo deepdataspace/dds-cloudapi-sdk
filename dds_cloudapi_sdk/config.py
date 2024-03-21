@@ -35,7 +35,7 @@ class Config:
     """
     The configuration representation for the SDK client.
 
-    :param token: The API token of your DDS account. Currently, you can apply for an API token by sending email to weiliu@idea.edu.cn.
+    :param token: The API token of your DDS account. Currently, you can apply for an API token by sending email to deepdataspace_dm@idea.edu.cn.
 
     """
 
