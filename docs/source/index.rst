@@ -1,7 +1,7 @@
 dds-cloudapi-sdk
 ============================================
 
-dds-cloudapi-sdk is a python package simplifying the user interactions with the DDS Cloud API with these features:
+The dds-cloudapi-sdk is a Python package designed to simplify interactions with the DDS Cloud API. It features:
 
 - **Straightforward** APIs
 - **Unified** interfaces
@@ -15,7 +15,7 @@ You can get the SDK library directly from PyPi::
 
 Quick Start
 -----------
-Here is a simple example of the popular IVP algorithm::
+Below is a straightforward example for the popular IVP algorithm::
 
     # 1. Initialize the client with your API token.
     from dds_cloudapi_sdk import Config
@@ -25,8 +25,9 @@ Here is a simple example of the popular IVP algorithm::
     config = Config(token)
     client = Client(config)
 
-    # 2. Optional: Upload local image to the server and get the URL.
-    infer_image_url = client.upload_file("path/to/infer/image.jpg")
+    # 2. Upload local image to the server and get the URL.
+    infer_image_url = "https://dev.deepdataspace.com/static/04_a.ae28c1d6.jpg"
+    # infer_image_url = client.upload_file("path/to/infer/image.jpg")  # you can also upload local file for processing
     prompt_image_url = infer_image_url  # use the same image for prompt
 
     # 3. Create a task with proper parameters.
@@ -46,6 +47,7 @@ Here is a simple example of the popular IVP algorithm::
 
     # 5. Parse the result.
     from dds_cloudapi_sdk.tasks.ivp import TaskResult
+
     result: TaskResult = task.result
 
     mask_url = result.mask_url  # the image url with all masks drawn on
@@ -67,17 +69,18 @@ Here is a simple example of the popular IVP algorithm::
         # save the image to file
         mask_image.save(f"data/mask_{idx}.png")
 
+
 Documentation
 -------------
-As the example shown above, there are three major steps to run a algorithm:
+As illustrated above, executing an algorithm involves three key steps:
 
-- **1. Config**: Initialize a config object with the API token.
-- **2. Client**: Initialize a client object with the config above.
-- **3. Tasks**: Trigger a task with the client above and get the result.
+- **1. Config**: Initializing a configuration object with your API token.
+- **2. Client**: Setting up a client object with the previously created config.
+- **3. Tasks**: Executing a task through the client to obtain results.
 
-The first two steps are exactly the same for all algorithms.
+The first two steps remain consistent across all algorithms, providing a unified interface for any task execution.
 
-So the rest of this doc will introduce the Config and Client briefly and then dive into the details of different usage patterns of every algorithms(task classes).
+The rest of this document will briefly cover the Config and Client before diving into the various usage patterns of the algorithms (or task classes).
 
 .. toctree::
    :maxdepth: 2
