@@ -13,11 +13,11 @@ This section demonstrates the usages of both TinyGSAMTask and BaseGSAMTask.
 TinyGSAMTask
 ~~~~~~~~~~~~
 
-First of all, make sure you have installed this SDK by pip::
+First of all, make sure you have installed this SDK by `pip`::
 
     pip install dds-cloudapi-sdk
 
-The TinyGSAMTask triggers the Grounded-SAM algorithm with tiny model::
+Then trigger the Grounded-SAM algorithm with tiny model by TinyGSAMTask::
 
     from dds_cloudapi_sdk import Client
     from dds_cloudapi_sdk import Config
@@ -59,7 +59,7 @@ The usage pattern of BaseGSAMTask is exactly the same like TinyGSAMTask, except 
     # install the SDK by pip
     pip install dds-cloudapi-sdk
 
-Then trigger the task using the SDK::
+Then trigger the task using the BaseGSAMTask class::
 
     from dds_cloudapi_sdk import Config
     from dds_cloudapi_sdk import Client

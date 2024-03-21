@@ -9,11 +9,11 @@ Trex - Generic Inference
 Usage Pattern
 -------------
 
-First of all, make sure you have installed this SDK by pip::
+First of all, make sure you have installed this SDK by `pip`::
 
     pip install dds-cloudapi-sdk
 
-Then trigger the algorithm through TRexGenericInfer::
+Then trigger the algorithm by TRexGenericInfer class::
 
     from dds_cloudapi_sdk import Config
     from dds_cloudapi_sdk import Client

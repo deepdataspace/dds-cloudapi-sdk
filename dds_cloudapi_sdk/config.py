@@ -1,7 +1,6 @@
 """
-Initializing the configuration is the first step users have to do before calling any DDS CloudAPI services.
-
-This is done by initializing a :class:`Config <dds_cloudapi_sdk.config.Config Class>` class with the API token::
+Initializing the configuration is the first step required before utilizing any services offered by DDS CloudAPI.
+This process involves creating an instance of the :class:`Config <dds_cloudapi_sdk.config.Config Class>` class with your API token::
 
     from dds_cloudapi_sdk import Config
 

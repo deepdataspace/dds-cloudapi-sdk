@@ -9,11 +9,11 @@ Trex - Embedding Inference
 Usage Pattern
 -------------
 
-First of all, make sure you have installed this SDK by pip::
+First of all, make sure you have installed this SDK by `pip`::
 
     pip install dds-cloudapi-sdk
 
-Then trigger the customization algorithm through TRexEmbdInfer::
+Then trigger the customization algorithm by TRexEmbdInfer::
 
     from dds_cloudapi_sdk import Client
     from dds_cloudapi_sdk import Config

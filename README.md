@@ -6,7 +6,7 @@
 <p align="center">
 
 <!-- prettier-ignore -->
-**The Python SDK for calling the DDS Cloud API.**
+**The Python SDK for the DDS Cloud API.**
 ---
 
 <!-- prettier-ignore -->
@@ -21,16 +21,23 @@
 
 ---
 
-## 1. Installation
+The dds-cloudapi-sdk is a Python package designed to simplify interactions with the DDS Cloud API. It features:
 
-```bash
-pip install -U dds-cloudapi-sdk
+- **Straightforward** APIs
+- **Unified** interfaces
+- **Handy** utilities
+
+## Installation
+
+You can get the SDK library directly from PyPi:
+
+```shell
+pip install dds-cloudapi-sdk
 ```
 
-## 2. How to Use
+## Quick Start
 
-The following is a simple example of how to use the SDK to call the DDS Cloud API for interactive visual prompt (IVP)
-tasks.
+Below is a straightforward example for the popular IVP algorithm:
 
 ```python
 # 1. Initialize the client with your API token.
@@ -41,8 +48,9 @@ token = "Your API Token Here"
 config = Config(token)
 client = Client(config)
 
-# 2. Optional: Upload local image to the server and get the URL.
-infer_image_url = client.upload_file("path/to/infer/image.jpg")
+# 2. Upload local image to the server and get the URL.
+infer_image_url = "https://dev.deepdataspace.com/static/04_a.ae28c1d6.jpg"
+# infer_image_url = client.upload_file("path/to/infer/image.jpg")  # you can also upload local file for processing
 prompt_image_url = infer_image_url  # use the same image for prompt
 
 # 3. Create a task with proper parameters.
@@ -52,9 +60,7 @@ from dds_cloudapi_sdk.tasks import LabelTypes
 
 task = IVPTask(
     prompt_image_url=prompt_image_url,
-    prompts=[
-        RectPrompt(rect=[475.18, 550.20, 548.10, 599.92], is_positive=True)
-    ],
+    prompts=[RectPrompt(rect=[475.18, 550.20, 548.10, 599.92], is_positive=True)],
     infer_image_url=infer_image_url,
     infer_label_types=[LabelTypes.BBox, LabelTypes.Mask],  # infer both bbox and mask
 )
@@ -85,17 +91,15 @@ for idx, obj in enumerate(objects):
 
     # save the image to file
     mask_image.save(f"data/mask_{idx}.png")
+
 ```
 
-Please visit the API documentation for more details on how to use the
-SDK: [DDS CloudAPI SDK Reference](https://dds-cloudapi-sdk-docs.deepdataspace.com)
+For more details on using the SDK, please refer to the [DDS CloudAPI SDK Reference](https://cloudapi-sdk.deepdataspace.com)
 
 ## 3. Apply for an API Token
-
-Our API is currently in private beta. Please contact us at [Wei Liu, weiliu@idea.edu.cn](mailto:weiliu@idea.edu.cn) to
-apply for an API token.  
-We are fully committed to support academic research and education, please feel free to reach out to us for any questions
-or suggestions.
+Our API is in private beta. Contact us at [deepdataspace_dm@idea.edu.cn](mailto:deepdataspace_dm@idea.edu.cn) to apply for a free API token.  
+Please include a brief introduction to your research or project and how you plan to use the API in your application.  
+We're dedicated to supporting academic research and education and welcome any questions or suggestions.
 
 ## 4. License
 

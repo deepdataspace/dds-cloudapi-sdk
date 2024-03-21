@@ -9,7 +9,7 @@ Trex - Embedding Customization
 Usage Pattern
 -------------
 
-First of all, make sure you have installed this SDK by pip::
+First of all, make sure you have installed this SDK by `pip`::
 
     pip install dds-cloudapi-sdk
 
