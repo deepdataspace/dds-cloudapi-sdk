@@ -59,7 +59,7 @@ class Client:
         """
 
         # request our server API to upload the image file
-        sign_url = f"https://{self.config.endpoint.value}/upload_signature"
+        sign_url = f"https://{self.config.endpoint}/upload_signature"
         headers = {"Token": self.config.token}
 
         file_name = os.path.basename(local_path)

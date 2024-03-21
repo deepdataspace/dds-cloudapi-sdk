@@ -44,5 +44,5 @@ class Config:
         Initialize a configuration with API token.
         """
 
-        self.endpoint: ServerEndpoint = _choose_endpoint()
+        self.endpoint: str = _choose_endpoint()
         self.token: str = token
