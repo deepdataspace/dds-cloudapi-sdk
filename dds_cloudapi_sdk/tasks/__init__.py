@@ -38,6 +38,7 @@ __all__ = [
     "BatchPointPrompt",
     "BatchRectPrompt",
     "BatchEmbdPrompt",
+    "BatchPointInfer",
     "BatchRectInfer",
     "BatchEmbdInfer",
     "IVPTask",
