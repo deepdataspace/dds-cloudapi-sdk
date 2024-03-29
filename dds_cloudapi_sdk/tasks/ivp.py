@@ -1,5 +1,5 @@
 """
-Interactive Visual Prompting (iVP) is an interactive object detection and counting system based on the T-Rex model independently developed by the IDEA CVR team.
+Interactive Visual Prompting (IVP) is an interactive object detection and counting system based on the T-Rex model independently developed by the IDEA CVR team.
 
 It enables object detection and counting through visual prompts without any training, truly realizing a single visual model applicable to multiple scenarios.
 
