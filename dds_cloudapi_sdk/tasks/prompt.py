@@ -73,7 +73,7 @@ class BatchPointPrompt(pydantic.BaseModel):
     points: List[List[float]]  #: a list of point locations in [[x1, y1], [x2, y2]]
 
     image: str = None  #: the image url the point prompts are acting on
-    category_id: int = None  #: the category id of the rects
+    category_id: int = None  #: the category id of the points, only required for :class:`TRexInteractiveInfer <dds_cloudapi_sdk.tasks.trex_interactive.TRexInteractiveInfer>` task.
 
 
 class BatchRectPrompt(pydantic.BaseModel):
@@ -88,7 +88,7 @@ class BatchRectPrompt(pydantic.BaseModel):
     rects: List[List[float]]  #: a list of rect locations in [[[upper_left_x, upper_left_y, lower_right_x, lower_right_y], ...]
 
     image: str = None  #: the image url the rectangle prompts are acting on, if not provided, the infer image url in context will be used
-    category_id: int = None  #: the category id of the rects
+    category_id: int = None  #: the category id of the rects, only required for :class:`TRexInteractiveInfer <dds_cloudapi_sdk.tasks.trex_interactive.TRexInteractiveInfer>` task.
 
 
 class BatchEmbdPrompt(pydantic.BaseModel):
@@ -100,7 +100,7 @@ class BatchEmbdPrompt(pydantic.BaseModel):
     """
 
     embd: str = None  #: the embedding file url
-    category_id: int  #: the category id of the rects
+    category_id: int  #: the category id of the objects inferred by this embedding file
 
 
 class BatchPointInfer(pydantic.BaseModel):
@@ -112,7 +112,7 @@ class BatchPointInfer(pydantic.BaseModel):
     """
 
     image: str  #: the image url to be inferred on
-    prompts: List[BatchPointPrompt]  # a list of :class:`BatchPointPrompt <dds_cloudapi_sdk.tasks.prompt.BatchPointPrompt>`
+    prompts: List[BatchPointPrompt]  #: a list of :class:`BatchPointPrompt <dds_cloudapi_sdk.tasks.prompt.BatchPointPrompt>`
 
 
 class BatchRectInfer(pydantic.BaseModel):
@@ -124,7 +124,7 @@ class BatchRectInfer(pydantic.BaseModel):
     """
 
     image: str  #: the image url to be inferred on
-    prompts: List[BatchRectPrompt]  # a list of :class:`BatchRectPrompt <dds_cloudapi_sdk.tasks.prompt.BatchRectPrompt>`
+    prompts: List[BatchRectPrompt]  #: a list of :class:`BatchRectPrompt <dds_cloudapi_sdk.tasks.prompt.BatchRectPrompt>`
 
 
 class BatchEmbdInfer(pydantic.BaseModel):
@@ -136,4 +136,4 @@ class BatchEmbdInfer(pydantic.BaseModel):
     """
 
     image: str  #: the image url to be inferred on
-    prompts: List[BatchEmbdPrompt]  # a list of :class:`BatchEmbdPrompt <dds_cloudapi_sdk.tasks.prompt.BatchEmbdPrompt>`
+    prompts: List[BatchEmbdPrompt]  #: a list of :class:`BatchEmbdPrompt <dds_cloudapi_sdk.tasks.prompt.BatchEmbdPrompt>`
