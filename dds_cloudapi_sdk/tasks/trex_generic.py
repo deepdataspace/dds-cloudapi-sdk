@@ -109,12 +109,12 @@ def test():
 
     batch_prompts = [
         BatchRectPrompt(
-            image="https://dev.deepdataspace.com/static/04_a.ae28c1d6.jpg",
+            image="https://algosplt.oss-cn-shenzhen.aliyuncs.com/test_files/tasks/ivp/04_b.jpg",
             rects=[[475.18413597733706, 550.1983002832861, 548.1019830028329, 599.915014164306]]
         )
     ]
     task = TRexGenericInfer(
-        image_url="https://dev.deepdataspace.com/static/04_a.ae28c1d6.jpg",
+        image_url="https://algosplt.oss-cn-shenzhen.aliyuncs.com/test_files/tasks/ivp/04_b.jpg",
         batch_prompts=batch_prompts
     )
 

@@ -67,7 +67,7 @@ class BaseTask(abc.ABC):
 
     def trigger(self, config: Config):
         if self.status is not None:
-            raise RuntimeError("Task is already triggered, you can't triggered twice.")
+            raise RuntimeError(f"{self} is already triggered, you can't triggered twice.")
 
         self.config = config
         self.status = TaskStatus.Triggering
@@ -76,19 +76,19 @@ class BaseTask(abc.ABC):
 
         rsp_json = rsp.json()
         if rsp_json["code"] != 0:
-            raise RuntimeError(f"Failed to trigger task, error: {rsp_json['msg']}")
+            raise RuntimeError(f"Failed to trigger {self}, error: {rsp_json['msg']}")
         self.task_uuid = rsp_json["data"]["task_uuid"]
-        logger.info(f"Task {self.task_uuid} is triggered successfully")
+        logger.info(f"{self} is triggered successfully")
 
     def check(self):
         if self.status is None:
-            raise RuntimeError("Task is not triggered, you can't check it's status")
+            raise RuntimeError(f"{self} is not triggered, you can't check it's status")
 
         api = self.api_check_url
         rsp = requests.get(api, timeout=2, headers=self.headers)
         rsp_json = rsp.json()
         if rsp_json["code"] != 0:
-            raise RuntimeError(f"Failed to check task, error: {rsp_json['msg']}")
+            raise RuntimeError(f"Failed to check {self}, error: {rsp_json['msg']}")
 
         task_data = rsp_json["data"]
         self.status = TaskStatus(task_data["status"])
@@ -100,7 +100,7 @@ class BaseTask(abc.ABC):
 
     def wait(self):
         if self.status is None:
-            raise RuntimeError("Task is not triggered, you can't wait for it's result")
+            raise RuntimeError(f"{self} is not triggered, you can't wait for it's result")
 
         while True:
             if self.status not in {TaskStatus.Triggering, TaskStatus.Waiting, TaskStatus.Running}:
@@ -108,17 +108,20 @@ class BaseTask(abc.ABC):
 
             self.check()
             if self.status == TaskStatus.Waiting:
-                logger.info(f"task {self.task_uuid} is waiting")
+                logger.info(f"{self} is waiting")
             elif self.status == TaskStatus.Running:
-                logger.info(f"task {self.task_uuid} is running")
+                logger.info(f"{self}  is running")
             elif self.status == TaskStatus.Success:
-                logger.info(f"task {self.task_uuid} is success")
+                logger.info(f"{self}  is success")
                 return
             elif self.status == TaskStatus.Failed:
-                logger.info(f"task {self.task_uuid} is failed")
-                raise RuntimeError(f"Task {self.task_uuid} is failed, error: {self.error}")
+                logger.info(f"{self}  is failed")
+                raise RuntimeError(f"{self}  is failed, error: {self.error}")
             time.sleep(0.5)
 
     def run(self, config: Config):
         self.trigger(config)
         self.wait()
+
+    def __str__(self):
+        return f"{self.__class__.__name__}[{self.task_uuid}]"

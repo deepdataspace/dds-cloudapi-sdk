@@ -3,6 +3,7 @@
 /data
 .idea
 /dev.*
+/*.png
 .vscode
 .DS_Store
 .python-version
