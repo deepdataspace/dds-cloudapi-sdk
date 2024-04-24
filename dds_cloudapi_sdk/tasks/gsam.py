@@ -199,7 +199,7 @@ def test():
     config = Config(test_token)
     client = Client(config)
     task = TinyGSAMTask(
-        "https://dds-frontend.oss-cn-shenzhen.aliyuncs.com/static_files/playground/grounded_sam/05.jpg",
+        "https://algosplt.oss-cn-shenzhen.aliyuncs.com/test_files/tasks/grounded_sam/iron_man.jpg",
         [TextPrompt(text="iron man")]
     )
 
@@ -207,7 +207,7 @@ def test():
     print(task.result)
 
     task = BaseGSAMTask(
-        "https://dds-frontend.oss-cn-shenzhen.aliyuncs.com/static_files/playground/grounded_sam/05.jpg",
+        "https://algosplt.oss-cn-shenzhen.aliyuncs.com/test_files/tasks/grounded_sam/iron_man.jpg",
         [TextPrompt(text="iron man")]
     )
 

@@ -94,7 +94,7 @@ def test():
     config = Config(test_token)
     client = Client(config)
 
-    image_url = "https://dev.deepdataspace.com/static/04_a.ae28c1d6.jpg"
+    image_url = "https://algosplt.oss-cn-shenzhen.aliyuncs.com/test_files/tasks/ivp/04_b.jpg"
 
     batch_prompts = [
         BatchRectPrompt(

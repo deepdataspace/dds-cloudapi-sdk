@@ -106,7 +106,7 @@ def test():
     config = Config(test_token)
     client = Client(config)
 
-    infer_image = "https://dev.deepdataspace.com/static/04_a.ae28c1d6.jpg"
+    infer_image = "https://algosplt.oss-cn-shenzhen.aliyuncs.com/test_files/tasks/ivp/04_b.jpg"
 
     infer_1 = BatchRectInfer(
         image=infer_image,

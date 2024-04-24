@@ -193,9 +193,9 @@ def test():
     config = Config(test_token)
     client = Client(config)
     task = IVPTask(
-        prompt_image_url="https://dev.deepdataspace.com/static/04_a.ae28c1d6.jpg",
+        prompt_image_url="https://algosplt.oss-cn-shenzhen.aliyuncs.com/test_files/tasks/ivp/04_b.jpg",
         prompts=[RectPrompt(rect=[475.18413597733706, 550.1983002832861, 548.1019830028329, 599.915014164306])],
-        infer_image_url="https://dev.deepdataspace.com/static/04_b.ae28c1d6.jpg",
+        infer_image_url="https://algosplt.oss-cn-shenzhen.aliyuncs.com/test_files/tasks/ivp/04_b.jpg",
         infer_label_types=[LabelTypes.BBox],
     )
 
@@ -203,9 +203,9 @@ def test():
     print(task.result)
 
     task = IVPTask(
-        prompt_image_url="https://dev.deepdataspace.com/static/04_a.ae28c1d6.jpg",
+        prompt_image_url="https://algosplt.oss-cn-shenzhen.aliyuncs.com/test_files/tasks/ivp/04_b.jpg",
         prompts=[RectPrompt(rect=[475.18413597733706, 550.1983002832861, 548.1019830028329, 599.915014164306])],
-        infer_image_url="https://dev.deepdataspace.com/static/04_b.ae28c1d6.jpg",
+        infer_image_url="https://algosplt.oss-cn-shenzhen.aliyuncs.com/test_files/tasks/ivp/04_b.jpg",
         infer_label_types=[LabelTypes.Mask],
     )
 
@@ -213,9 +213,9 @@ def test():
     print(task.result)
 
     task = IVPTask(
-        prompt_image_url="https://dev.deepdataspace.com/static/04_a.ae28c1d6.jpg",
+        prompt_image_url="https://algosplt.oss-cn-shenzhen.aliyuncs.com/test_files/tasks/ivp/04_b.jpg",
         prompts=[RectPrompt(rect=[475.18413597733706, 550.1983002832861, 548.1019830028329, 599.915014164306])],
-        infer_image_url="https://dev.deepdataspace.com/static/04_b.ae28c1d6.jpg",
+        infer_image_url="https://algosplt.oss-cn-shenzhen.aliyuncs.com/test_files/tasks/ivp/04_b.jpg",
         infer_label_types=[LabelTypes.Mask, LabelTypes.BBox],
     )
 
