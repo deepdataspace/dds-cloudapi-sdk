@@ -23,21 +23,21 @@ from dds_cloudapi_sdk.tasks.prompt import TextPrompt
 
 
 class DetectionTarget(enum.Enum):
-    BBox = "bbox"
-    Mask = "mask"
+    BBox = "bbox"  #:
+    Mask = "mask"  #:
 
 
 class DetectionModel(enum.Enum):
-    GDino1 = "GroundingDino-1"
-    GDino1_5_Edge = "GroundingDino-1.5-Edge"
-    GDino1_5_Pro = "GroundingDino-1.5-Pro"
+    GDino1 = "GroundingDino-1"  #:
+    GDino1_5_Edge = "GroundingDino-1.5-Edge"  #:
+    GDino1_5_Pro = "GroundingDino-1.5-Pro"  #:
 
 
 class DetectionObjectMask(pydantic.BaseModel):
     """
     | The mask detected by detection task.
     | It's a format borrow COCO which compressing the mask image array in RLE format.
-    | You can restore it back to a png image array by :func:`IVPTask.rle2rgba <dds_cloudapi_sdk.tasks.ivp.DetectionTask.rle2rgba>`:
+    | You can restore it back to a png image array by :func:`DetectionTask.rle2rgba <dds_cloudapi_sdk.tasks.detection.DetectionTask.rle2rgba>`:
 
     :param counts: the compressed mask array in RLE format
     :param size: the 2d size of the array, (h, w)
@@ -67,7 +67,7 @@ class TaskResult(pydantic.BaseModel):
     The task result of detection task.
 
     :param mask_url: an image url with all objects' mask drawn on
-    :param objects: a list of detected objects of :class:`IVPObject <dds_cloudapi_sdk.tasks.detection.DetectionObject>`
+    :param objects: a list of detected objects of :class:`DetectionObject <dds_cloudapi_sdk.tasks.detection.DetectionObject>`
     """
 
     mask_url: Union[str, None] = None
@@ -80,7 +80,7 @@ class DetectionTask(BaseTask):
 
     :param image_url: the image url for detection.
     :param prompts: list of :class:`TextPrompt <dds_cloudapi_sdk.tasks.prompt.TextPrompt>`.
-    :param targets: detection targets, list of :class:`TextPrompt <dds_cloudapi_sdk.tasks.detection.DetectionTarget>`.
+    :param targets: detection targets, list of :class:`DetectionTarget <dds_cloudapi_sdk.tasks.detection.DetectionTarget>`.
     :param model: the model to be used for detection, supported models are enumerated by :class:`DetectionModel <dds_cloudapi_sdk.tasks.detection.DetectionModel>`.
     """
 

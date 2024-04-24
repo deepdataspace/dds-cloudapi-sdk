@@ -13,13 +13,14 @@ First of all, make sure you have installed this SDK by `pip`::
 
     pip install dds-cloudapi-sdk
 
-Then trigger the algorithm through IVPTask::
+Then trigger the algorithm through DetectionTask::
 
     from dds_cloudapi_sdk import Config
     from dds_cloudapi_sdk import Client
-    from dds_cloudapi_sdk import IVPTask
-    from dds_cloudapi_sdk import RectPrompt
-    from dds_cloudapi_sdk import LabelTypes
+    from dds_cloudapi_sdk import DetectionTask
+    from dds_cloudapi_sdk import TextPrompt
+    from dds_cloudapi_sdk import DetectionModel
+    from dds_cloudapi_sdk import DetectionTarget
 
     # Step 1: initialize the config
     token = "Your API token here"
