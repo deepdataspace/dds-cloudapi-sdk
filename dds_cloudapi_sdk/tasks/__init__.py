@@ -21,6 +21,9 @@ Here's how to utilize a task class effectively:
 
 from dds_cloudapi_sdk.tasks.base import LabelTypes
 from dds_cloudapi_sdk.tasks.base import TaskStatus
+from dds_cloudapi_sdk.tasks.detection import DetectionModel
+from dds_cloudapi_sdk.tasks.detection import DetectionTarget
+from dds_cloudapi_sdk.tasks.detection import DetectionTask
 from dds_cloudapi_sdk.tasks.gsam import BaseGSAMTask
 from dds_cloudapi_sdk.tasks.gsam import TinyGSAMTask
 from dds_cloudapi_sdk.tasks.ivp import IVPTask
@@ -47,5 +50,8 @@ __all__ = [
     "TRexGenericInfer",
     "TRexInteractiveInfer",
     "TRexEmbdCustomize",
-    "TRexEmbdInfer"
+    "TRexEmbdInfer",
+    "DetectionTask",
+    "DetectionModel",
+    "DetectionTarget"
 ]
