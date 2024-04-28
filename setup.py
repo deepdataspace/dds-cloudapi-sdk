@@ -2,8 +2,6 @@ import os
 
 from setuptools import setup
 
-from dds_cloudapi_sdk import version
-
 description = "The SDK for calling deepdataspace cloud API."
 with open("README.md", "r", encoding="utf8") as fp:
     long_description = fp.read()
@@ -52,7 +50,7 @@ def find_packages(pkg_dir: str):
 
 
 setup(name="dds-cloudapi-sdk",
-      version=version,
+      version="0.2.1",
       description=description,
       long_description=long_description,
       long_description_content_type="text/markdown",
