@@ -31,6 +31,8 @@ class DetectionModel(enum.Enum):
     GDino1 = "GroundingDino-1"  #:
     GDino1_5_Edge = "GroundingDino-1.5-Edge"  #:
     GDino1_5_Pro = "GroundingDino-1.5-Pro"  #:
+    GDino1_6_Edge = "GroundingDino-1.6-Edge"  #:
+    GDino1_6_Pro = "GroundingDino-1.6-Pro"  #:
 
 
 class DetectionObjectMask(pydantic.BaseModel):
@@ -271,6 +273,11 @@ def test_gdino_1_5_edge():
 def test_gdino_1_5_pro():
     return _test_specific_model(DetectionModel.GDino1_5_Pro)
 
+def test_gdino_1_6_edge():
+    return _test_specific_model(DetectionModel.GDino1_6_Edge)
+
+def test_gdino_1_6_pro():
+    return _test_specific_model(DetectionModel.GDino1_6_Pro)
 
 def test():
     """
@@ -284,6 +291,8 @@ def test():
     target_map = {
         "gdino_1_5_pro" : test_gdino_1_5_pro,
         "gdino_1_5_edge": test_gdino_1_5_edge,
+        "gdino_1_6_pro" : test_gdino_1_6_pro,
+        "gdino_1_6_edge": test_gdino_1_6_edge,
         "gdino_1"       : test_gdino_1,
     }
 

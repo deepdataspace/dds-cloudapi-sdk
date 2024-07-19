@@ -1,6 +1,6 @@
 .. currentmodule:: dds_cloudapi_sdk.tasks.detection
 
-Detection
+Detection - Grounding DINO
 ===============================
 
 .. automodule:: dds_cloudapi_sdk.tasks.detection
