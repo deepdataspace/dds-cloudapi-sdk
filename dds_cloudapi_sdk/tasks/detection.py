@@ -5,7 +5,8 @@ Supported models:
  - Grounding-Dino-1
  - Grounding-Dino-1.5-Edge
  - Grounding-Dino-1.5-Pro
-
+ - Grounding-Dino-1.6-Edge
+ - Grounding-Dino-1.6-Pro
 """
 
 import enum
