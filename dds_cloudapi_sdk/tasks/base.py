@@ -26,7 +26,7 @@ class LabelTypes(enum.Enum):
 
 class BaseTask(abc.ABC):
 
-    request_timeout = 5
+    _request_timeout = 5
 
     def __init__(self):
         super().__init__()
@@ -68,6 +68,10 @@ class BaseTask(abc.ABC):
     def api_check_url(self):
         return f"https://{self.config.endpoint}/task_statuses/{self.task_uuid}"
 
+
+    def set_request_timeout(self, timeout):
+        self._request_timeout = timeout
+
     def trigger(self, config: Config):
         if self.status is not None:
             raise RuntimeError(f"{self} is already triggered, you can't triggered twice.")
@@ -75,7 +79,7 @@ class BaseTask(abc.ABC):
         self.config = config
         self.status = TaskStatus.Triggering
 
-        rsp = requests.post(self.api_trigger_url, json=self.api_body, headers=self.headers, timeout=self.request_timeout)
+        rsp = requests.post(self.api_trigger_url, json=self.api_body, headers=self.headers, timeout=self._request_timeout)
 
         rsp_json = rsp.json()
         if rsp_json["code"] != 0:
@@ -88,7 +92,7 @@ class BaseTask(abc.ABC):
             raise RuntimeError(f"{self} is not triggered, you can't check it's status")
 
         api = self.api_check_url
-        rsp = requests.get(api, timeout=self.request_timeout, headers=self.headers)
+        rsp = requests.get(api, timeout=self._request_timeout, headers=self.headers)
         rsp_json = rsp.json()
         if rsp_json["code"] != 0:
             raise RuntimeError(f"Failed to check {self}, error: {rsp_json['msg']}")

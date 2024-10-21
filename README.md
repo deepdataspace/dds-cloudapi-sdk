@@ -64,6 +64,7 @@ task = IVPTask(
     infer_image_url=infer_image_url,
     infer_label_types=[LabelTypes.BBox, LabelTypes.Mask],  # infer both bbox and mask
 )
+# task.set_request_timeout(10)  # set the request timeout in seconds，default is 5 seconds
 
 # 4. Run the task and get the result.
 client.run_task(task)
