@@ -25,6 +25,9 @@ class LabelTypes(enum.Enum):
 
 
 class BaseTask(abc.ABC):
+
+    request_timeout = 5
+
     def __init__(self):
         super().__init__()
 
@@ -72,7 +75,7 @@ class BaseTask(abc.ABC):
         self.config = config
         self.status = TaskStatus.Triggering
 
-        rsp = requests.post(self.api_trigger_url, json=self.api_body, headers=self.headers, timeout=2)
+        rsp = requests.post(self.api_trigger_url, json=self.api_body, headers=self.headers, timeout=self.request_timeout)
 
         rsp_json = rsp.json()
         if rsp_json["code"] != 0:
@@ -85,7 +88,7 @@ class BaseTask(abc.ABC):
             raise RuntimeError(f"{self} is not triggered, you can't check it's status")
 
         api = self.api_check_url
-        rsp = requests.get(api, timeout=2, headers=self.headers)
+        rsp = requests.get(api, timeout=self.request_timeout, headers=self.headers)
         rsp_json = rsp.json()
         if rsp_json["code"] != 0:
             raise RuntimeError(f"Failed to check {self}, error: {rsp_json['msg']}")
