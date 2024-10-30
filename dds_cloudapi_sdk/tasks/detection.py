@@ -85,6 +85,8 @@ class DetectionTask(BaseTask):
     :param prompts: list of :class:`TextPrompt <dds_cloudapi_sdk.tasks.prompt.TextPrompt>`.
     :param targets: detection targets, list of :class:`DetectionTarget <dds_cloudapi_sdk.tasks.detection.DetectionTarget>`.
     :param model: the model to be used for detection, supported models are enumerated by :class:`DetectionModel <dds_cloudapi_sdk.tasks.detection.DetectionModel>`.
+    :param bbox_threshold: the detection threshold for bbox
+    :param iou_threshold: the detection threshold for iou
     """
 
     def __init__(self,
@@ -92,6 +94,9 @@ class DetectionTask(BaseTask):
                  prompts: List[TextPrompt],
                  targets: List[DetectionTarget],
                  model: DetectionModel,
+                 bbox_threshold: float = 0.25,
+                 iou_threshold: float = 0.8
+
                  ):
         super().__init__()
 
@@ -99,6 +104,8 @@ class DetectionTask(BaseTask):
         self.prompts = prompts
         self.targets = targets
         self.model = model
+        self.bbox_threshold = bbox_threshold
+        self.iou_threshold = iou_threshold
 
     @property
     def api_path(self):
@@ -110,7 +117,9 @@ class DetectionTask(BaseTask):
             "image"  : self.image_url,
             "prompts": [p.dict() for p in self.prompts],
             "targets": [t.value for t in self.targets],
-            "model"  : self.model.value
+            "model"  : self.model.value,
+            "bbox_threshold": self.bbox_threshold,
+            "iou_threshold": self.iou_threshold
         }
 
         return data
