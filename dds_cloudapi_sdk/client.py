@@ -48,7 +48,7 @@ class Client:
     def __init__(self, config: Config):
         self.config = config
 
-    def upload_file(self, local_path: str) -> str:
+    def upload_file(self, local_path: str, timeout: int=10) -> str:
         """
         | Upload local file to dds server, return a visible url ready for calling dds cloud API.
 
@@ -64,7 +64,7 @@ class Client:
 
         file_name = os.path.basename(local_path)
         data = {"file_name": file_name}
-        rsp = requests.post(sign_url, json=data, headers=headers, timeout=2)
+        rsp = requests.post(sign_url, json=data, headers=headers, timeout=timeout)
         assert rsp.status_code == 200
         rsp_json = rsp.json()
 

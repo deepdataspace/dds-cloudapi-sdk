@@ -2,6 +2,7 @@ import abc
 import enum
 import logging
 import time
+import uuid
 
 import pydantic
 import requests
@@ -36,6 +37,7 @@ class BaseTask(abc.ABC):
         self.status = None
         self.error = None
         self._result = None
+        self.trigger_idempotency_key = uuid.uuid4().hex
 
     @property
     @abc.abstractmethod
@@ -61,6 +63,10 @@ class BaseTask(abc.ABC):
         return {"Token": self.config.token}
 
     @property
+    def trigger_headers(self):
+        return {"Token": self.config.token, "Idempotency-Key": self.trigger_idempotency_key}
+
+    @property
     def api_trigger_url(self):
         return f"https://{self.config.endpoint}/tasks/{self.api_path}"
 
@@ -73,19 +79,22 @@ class BaseTask(abc.ABC):
         self._request_timeout = timeout
 
     def trigger(self, config: Config):
-        if self.status is not None:
-            raise RuntimeError(f"{self} is already triggered, you can't triggered twice.")
+        if self.no_need_to_trigger():
+            return
 
         self.config = config
         self.status = TaskStatus.Triggering
 
-        rsp = requests.post(self.api_trigger_url, json=self.api_body, headers=self.headers, timeout=self._request_timeout)
+        rsp = requests.post(self.api_trigger_url, json=self.api_body, headers=self.trigger_headers, timeout=self._request_timeout)
 
         rsp_json = rsp.json()
         if rsp_json["code"] != 0:
             raise RuntimeError(f"Failed to trigger {self}, error: {rsp_json['msg']}")
         self.task_uuid = rsp_json["data"]["task_uuid"]
         logger.info(f"{self} is triggered successfully")
+
+    def no_need_to_trigger(self):
+        return self.status in (TaskStatus.Success, TaskStatus.Failed, TaskStatus.Waiting, TaskStatus.Running)
 
     def check(self):
         if self.status is None:
@@ -127,8 +136,17 @@ class BaseTask(abc.ABC):
             time.sleep(0.5)
 
     def run(self, config: Config):
-        self.trigger(config)
-        self.wait()
+        for i in range(3):
+            try:
+                self.trigger(config)
+                self.wait()
+                return
+            except requests.exceptions.ReadTimeout as e:
+                logger.warning(f"Failed to trigger {self}, times: {i+1}")
+                if i < 2:
+                    time.sleep(2)
+                    continue
+                raise e
 
     def __str__(self):
-        return f"{self.__class__.__name__}[{self.task_uuid}]"
+        return f"{self.__class__.__name__}<task_id:{self.task_uuid}, idemp_key:{self.trigger_idempotency_key}>"
