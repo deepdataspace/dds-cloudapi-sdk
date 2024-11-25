@@ -26,7 +26,7 @@ class DinoxObject(pydantic.BaseModel):
     category: str
     score: float
     bbox: BBox
-    rle: ObjectMask
+    mask: ObjectMask
     pose: Optional[PoseKeypoints] = None
     hand: Optional[HandKeypoints] = None
 
