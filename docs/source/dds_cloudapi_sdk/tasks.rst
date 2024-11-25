@@ -11,6 +11,7 @@ You can find detailed usage pattern for all tasks from following links.
 .. toctree::
    :maxdepth: 2
 
+   tasks/dinox
    tasks/detection
    tasks/gsam
    tasks/ivp
