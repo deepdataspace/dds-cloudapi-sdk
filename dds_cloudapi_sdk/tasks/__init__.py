@@ -19,6 +19,7 @@ Here's how to utilize a task class effectively:
 
 """
 
+from dds_cloudapi_sdk.tasks import types
 from dds_cloudapi_sdk.tasks.base import LabelTypes
 from dds_cloudapi_sdk.tasks.base import TaskStatus
 from dds_cloudapi_sdk.tasks.detection import DetectionModel
@@ -53,5 +54,6 @@ __all__ = [
     "TRexEmbdInfer",
     "DetectionTask",
     "DetectionModel",
-    "DetectionTarget"
+    "DetectionTarget",
+    "types"
 ]

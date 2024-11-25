@@ -10,10 +10,10 @@ url = "https://github.com/deepdataspace/dds-cloudapi-sdk"
 author = "cvr@idea"
 
 install_requires = [
-    "numpy==1.24.4",
-    "pillow==10.2.0",
-    "pydantic==2.6.3",
-    "requests==2.31.0",
+    "numpy>=1.24.4",
+    "pillow>=10.2.0",
+    "pydantic>=2.6.3, <= 3",
+    "requests>=2.31.0",
 ]
 
 classifiers = [
@@ -50,7 +50,7 @@ def find_packages(pkg_dir: str):
 
 
 setup(name="dds-cloudapi-sdk",
-      version="0.2.5",
+      version="0.3.1",
       description=description,
       long_description=long_description,
       long_description_content_type="text/markdown",
