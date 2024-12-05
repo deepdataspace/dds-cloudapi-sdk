@@ -1,3 +1,4 @@
+import enum
 from typing import Tuple
 
 import pydantic
@@ -61,3 +62,10 @@ class ObjectMask(pydantic.BaseModel):
 
     counts: str
     size: Tuple[int, int]
+
+
+class DetectionTarget(enum.Enum):
+    BBox = "bbox"
+    Mask = "mask"
+    Hand = "hand"
+    Pose = "pose"

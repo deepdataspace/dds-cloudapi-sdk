@@ -34,7 +34,7 @@ Then trigger the algorithm through DetectionTask::
 
     task = DinoxTask(
         image_url=image_url,
-        prompts=[TextPrompt(text="<universal_twice>")] # or specific prompts like 'vessel.cutting.person'
+        prompts=[TextPrompt(text="<prompt_free>")] # or specific prompts like 'vessel.cutting.person'
     )
 
     client.run_task(task)
