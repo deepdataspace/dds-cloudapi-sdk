@@ -37,7 +37,7 @@ pip install dds-cloudapi-sdk
 
 ## Quick Start
 
-Below is a straightforward example for the popular IVP algorithm:
+Below is a straightforward example for the popular DINO-X - Detection algorithm:
 
 ```python
 # 1. Initialize the client with your API token.
@@ -76,12 +76,9 @@ print(task.result)
 
 ```
 
-For more details on using the SDK, please refer to the [DDS CloudAPI SDK Reference](https://cloudapi-sdk.deepdataspace.com)
-
 ## 3. Apply for an API Token
-Our API is in private beta. Contact us at [deepdataspace_dm@idea.edu.cn](mailto:deepdataspace_dm@idea.edu.cn) to apply for a free API token.  
-Please include a brief introduction to your research or project and how you plan to use the API in your application.  
-We're dedicated to supporting academic research and education and welcome any questions or suggestions.
+Step 1: [Apply for API Quota](https://cloud.deepdataspace.com/apply-token?from=sdk).  
+Step 2: Create projects and get your API token from [here](https://cloud.deepdataspace.com/dashboard/token-key).
 
 ## 4. License
 
