@@ -36,12 +36,12 @@ def _get_original_bytesio(image_input: Union[str, bytes, BytesIO]) -> BytesIO:
 def resize_image(
     image_input: Union[str, bytes, BytesIO],
     max_size: int = 1536
-) -> Tuple[BytesIO, float]:
+) -> Tuple[BytesIO, dict]:
     """
     Resize image so that the longest edge is no larger than max_size
 
     Returns:
-        Tuple[BytesIO, float]: (resized image data, scale ratio)
+        Tuple[BytesIO, dict]: (resized image data, {scale: float, original_width: int, original_height: int})
         Returns original image and None if no resize needed
     """
     img = _open_image(image_input)
@@ -55,19 +55,19 @@ def resize_image(
     new_height = int(height * scale)
     resized_img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
-    return _save_to_bytesio(resized_img), scale
+    return _save_to_bytesio(resized_img), {'scale': scale, 'original_width': width, 'original_height': height}
 
 
 def resize_and_save_image(
     image_input: Union[str, bytes, BytesIO],
     output_path: str,
     max_size: int = 1536
-) -> float:
+) -> dict:
     """Resize image and save to output path"""
-    resized_data, scale = resize_image(image_input, max_size)
+    resized_data, scale_info = resize_image(image_input, max_size)
     with open(output_path, 'wb') as f:
         f.write(resized_data.getvalue())
-    return scale
+    return scale_info
 
 
 def image_to_base64(image_input: Union[str, bytes, BytesIO]) -> str:
