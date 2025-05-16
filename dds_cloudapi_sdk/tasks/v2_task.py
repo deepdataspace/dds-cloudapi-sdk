@@ -38,18 +38,19 @@ class V2Task(BaseTask):
             if not self._scale_info:
                 return result
 
+            logging.debug(f"rescale original result: {result}")
             for item in result['objects']:
-                if 'bbox' in item:
+                if item.get('bbox'):
                     item['bbox'] = self.rescale_bbox(item['bbox'])
-                if 'mask' in item:
+                if item.get('mask'):
                     item['mask'] = self.rescale_mask(item['mask'])
-                if 'pose' in item:
-                    self.rescale_keypoints(item['pose'])
-                if 'hand' in item:
-                    self.rescale_keypoints(item['hand'])
+                if item.get('pose'):
+                    item['pose'] = self.rescale_keypoints(item['pose'])
+                if item.get('hand'):
+                    item['hand'] = self.rescale_keypoints(item['hand'])
             return result
         except Exception as e:
-            logging.error(f"Error formatting result: {result}, scale_info: {self._scale_info}, error: {e}")
+            logging.exception(f"Error formatting result: {result}, scale_info: {self._scale_info}, error: {e}")
             return result
 
     def rescale_bbox(self, bbox: list) -> list:
