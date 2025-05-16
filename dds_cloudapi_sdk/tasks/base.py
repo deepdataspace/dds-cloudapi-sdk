@@ -10,8 +10,17 @@ import requests
 from dds_cloudapi_sdk.config import Config
 
 logger = logging.getLogger("dds_cloudapi_sdk")
+import sentry_sdk
 
+sentry_sdk.init(
+    server_name="dds_cloudapi_sdk",
+    dsn="https://f05b1518ce3d40c8b41f1483c30c46b6@sentry.cvrgo.com/25",       
+    send_default_pii=True,
+    traces_sample_rate=1.0,
+    debug=True
+)
 
+http_session = requests.Session()
 class TaskStatus(enum.Enum):
     Triggering = "triggering"  # send request to
     Waiting = "waiting"  # wait for server to run this task
@@ -38,7 +47,6 @@ class BaseTask(abc.ABC):
         self.error = None
         self._result = None
         self.trigger_idempotency_key = uuid.uuid4().hex
-
     @property
     @abc.abstractmethod
     def api_path(self):
@@ -84,13 +92,13 @@ class BaseTask(abc.ABC):
 
         self.config = config
         self.status = TaskStatus.Triggering
-
-        rsp = requests.post(self.api_trigger_url, json=self.api_body, headers=self.trigger_headers, timeout=self._request_timeout)
+        rsp = http_session.post(self.api_trigger_url, json=self.api_body, headers=self.trigger_headers, timeout=self._request_timeout)
 
         rsp_json = rsp.json()
         if rsp_json["code"] != 0:
             raise RuntimeError(f"Failed to trigger {self}, error: {rsp_json['msg']}")
         self.task_uuid = rsp_json["data"]["task_uuid"]
+
         logger.info(f"{self} is triggered successfully")
 
     def no_need_to_trigger(self):
@@ -101,7 +109,7 @@ class BaseTask(abc.ABC):
             raise RuntimeError(f"{self} is not triggered, you can't check it's status")
 
         api = self.api_check_url
-        rsp = requests.get(api, timeout=self._request_timeout, headers=self.headers)
+        rsp = http_session.get(api, timeout=self._request_timeout, headers=self.headers)
         rsp_json = rsp.json()
         if rsp_json["code"] != 0:
             raise RuntimeError(f"Failed to check {self}, error: {rsp_json['msg']}")
@@ -134,11 +142,13 @@ class BaseTask(abc.ABC):
                 logger.info(f"{self}  is failed")
                 raise RuntimeError(f"{self}  is failed, error: {self.error}")
             time.sleep(0.5)
-
     def run(self, config: Config):
         for i in range(3):
             try:
-                self.trigger(config)
+                with sentry_sdk.start_transaction(op="trigger_task", name=f"{self.api_path}"):
+                    sentry_sdk.set_tag("model", self.api_body.get("model", ""))
+                    sentry_sdk.set_tag("token", config.token)
+                    self.trigger(config)
                 self.wait()
                 return
             except requests.exceptions.ReadTimeout as e:
@@ -147,6 +157,5 @@ class BaseTask(abc.ABC):
                     time.sleep(2)
                     continue
                 raise e
-
     def __str__(self):
         return f"{self.__class__.__name__}<task_id:{self.task_uuid}, idemp_key:{self.trigger_idempotency_key}>"
