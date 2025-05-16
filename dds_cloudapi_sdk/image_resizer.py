@@ -42,21 +42,21 @@ def resize_image(
     Resize image so that the longest edge is no larger than max_size
 
     Returns:
-        Tuple[BytesIO, dict]: (resized image data, {scale: float, original_width: int, original_height: int})
+        Tuple[BytesIO, dict]: (resized image data, {ratio: float, original_width: int, original_height: int})
         Returns original image and None if no resize needed
     """
     img = _open_image(image_input)
     width, height = img.size
-    scale = min(max_size / max(width, height), 1.0)
+    ratio = min(max_size / max(width, height), 1.0)
 
-    if scale >= 1.0:
+    if ratio >= 1.0:
         return _get_original_bytesio(image_input), None
 
-    new_width = int(width * scale)
-    new_height = int(height * scale)
+    new_width = int(width * ratio)
+    new_height = int(height * ratio)
     resized_img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
-    return _save_to_bytesio(resized_img), {'scale': scale, 'original_width': width, 'original_height': height}
+    return _save_to_bytesio(resized_img), {'ratio': ratio, 'original_width': width, 'original_height': height}
 
 
 def resize_and_save_image(
