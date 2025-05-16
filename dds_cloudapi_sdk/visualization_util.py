@@ -5,10 +5,14 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 from typing import Union
+from urllib.parse import urlparse
 
 import cv2
 import numpy as np
 import supervision as sv
+import requests
+from PIL import Image
+from io import BytesIO
 
 from dds_cloudapi_sdk.rle_util import rle_to_array
 
@@ -223,7 +227,7 @@ class ResultVisualizer:
         Visualize detection results on image
 
         Args:
-            image_path: Path to input image
+            image_path: Path to input image or image URL
             objects: List of detection objects
             output_dir: Directory to save output image
             show_mask: Whether to show masks
@@ -234,10 +238,19 @@ class ResultVisualizer:
         Returns:
             str: Path to saved image
         """
-        # Read image
-        img = cv2.imread(image_path)
-        if img is None:
-            raise ValueError(f"Failed to read image: {image_path}")
+        # Read image from local file or URL
+        if urlparse(image_path).scheme in ('http', 'https'):
+            try:
+                response = requests.get(image_path)
+                response.raise_for_status()
+                img_array = np.array(Image.open(BytesIO(response.content)))
+                img = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
+            except Exception as e:
+                raise ValueError(f"Failed to read image from URL: {image_path}, error: {str(e)}")
+        else:
+            img = cv2.imread(image_path)
+            if img is None:
+                raise ValueError(f"Failed to read image: {image_path}")
 
         # Prepare detections
         detections = self._prepare_detections(objects)
@@ -295,7 +308,7 @@ def visualize_result(
     Convenience function to visualize detection results
 
     Args:
-        image_path: Path to input image
+        image_path: Path to input image or image URL
         result: Detection result dictionary
         output_dir: Directory to save output image
         class_names: List of class names, if None will be extracted from result
