@@ -84,7 +84,7 @@ class ResultVisualizer:
                         obj["mask"]["size"][0] * obj["mask"]["size"][1]
                     ).reshape(obj["mask"]["size"])
                 )
-            self.confidences.append(obj["score"])
+            self.confidences.append(obj.get("score", 1.0))
             if "category" in obj:
                 cls_name = obj["category"].lower().strip()
             elif "category_id" in obj:
