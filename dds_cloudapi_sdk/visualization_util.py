@@ -85,9 +85,14 @@ class ResultVisualizer:
                     ).reshape(obj["mask"]["size"])
                 )
             self.confidences.append(obj["score"])
-            cls_name = obj["category"].lower().strip()
+            if "category" in obj:
+                cls_name = obj["category"].lower().strip()
+            elif "category_id" in obj:
+                cls_name = str(obj["category_id"])
+            else:
+                cls_name = "unknown"
             self.class_names.append(cls_name)
-            self.class_ids.append(self.class_name_to_id[cls_name])
+            self.class_ids.append(self.class_name_to_id.get(cls_name, -1))  # -1 代表未知类别
 
         return sv.Detections(
             xyxy=np.array(boxes),
@@ -326,7 +331,10 @@ def visualize_result(
 
     # Extract class names if not provided
     if class_names is None:
-        class_names = list(set(obj['category'] for obj in objects))
+        class_names = list(set(
+            obj['category'] if 'category' in obj else str(obj.get('category_id', 'unknown'))
+            for obj in objects
+        ))
 
     # Create visualizer and visualize
     visualizer = ResultVisualizer(class_names)
