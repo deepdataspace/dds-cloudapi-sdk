@@ -106,7 +106,7 @@ class V2Task(BaseTask):
 
     @classmethod
     def is_resizable(cls, targets: List[str]) -> bool:
-        return all(target in cls.resizable_targets for target in targets)
+        return targets and all(target in cls.resizable_targets for target in targets)
 
     @classmethod
     def image_max_size(cls, api_path: str) -> int:
