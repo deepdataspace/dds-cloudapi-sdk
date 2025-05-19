@@ -17,7 +17,16 @@ def _save_to_bytesio(img: Image.Image) -> BytesIO:
     """Save image to BytesIO object"""
     output = BytesIO()
     format = img.format or 'JPEG'
-    img.save(output, format=format)
+
+    if img.mode not in ('RGB', 'L'):
+        img = img.convert('RGB')
+
+    try:
+        img.save(output, format=format)
+    except OSError:
+        output = BytesIO()
+        img.save(output, format='PNG')
+
     output.seek(0)
     return output
 
