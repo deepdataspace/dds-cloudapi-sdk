@@ -74,9 +74,15 @@ class ResultVisualizer:
         self.confidences = []
         self.class_names = []
         self.class_ids = []
+        self.objects = objects  # Store original objects list for label generation
 
         for obj in objects:
-            boxes.append(obj["bbox"])
+            # Safely get bounding box
+            bbox = obj.get("bbox") or obj.get('region')
+            if bbox is None:
+                logging.warning(f"Object missing both 'bbox' and 'region': {obj}")
+                continue
+            boxes.append(bbox)
             if "mask" in obj:
                 masks.append(
                     rle_to_array(
@@ -87,12 +93,17 @@ class ResultVisualizer:
             self.confidences.append(obj.get("score", 1.0))
             if "category" in obj:
                 cls_name = obj["category"].lower().strip()
+            elif "caption" in obj:
+                cls_name = obj["caption"].lower().strip()
             elif "category_id" in obj:
                 cls_name = str(obj["category_id"])
             else:
                 cls_name = "unknown"
+
+            # If category not in predefined list, use default category ID (0)
+            class_id = self.class_name_to_id.get(cls_name, 0)
             self.class_names.append(cls_name)
-            self.class_ids.append(self.class_name_to_id.get(cls_name, -1))  # -1 代表未知类别
+            self.class_ids.append(class_id)
 
         return sv.Detections(
             xyxy=np.array(boxes),
@@ -103,10 +114,20 @@ class ResultVisualizer:
     def _get_labels(self) -> List[str]:
         """Generate labels with class names and confidences"""
         logging.info(f"class_names: {self.class_names}, confidences: {self.confidences}")
-        return [
-            f"{class_name} {confidence:.2f}"
-            for class_name, confidence in zip(self.class_names, self.confidences)
-        ]
+        labels = []
+        for i, (class_name, confidence) in enumerate(zip(self.class_names, self.confidences)):
+            label_parts = [f"{class_name} {confidence:.2f}"]
+
+            # Add roc information (if exists)
+            if hasattr(self, 'objects') and i < len(self.objects):
+                obj = self.objects[i]
+                if "roc" in obj and obj["roc"]:
+                    label_parts.append(f"ROC: {obj['roc']}")
+                if "ocr" in obj and obj["ocr"]:
+                    label_parts.append(f"OCR: {obj['ocr']}")
+
+            labels.append(" | ".join(label_parts))
+        return labels
 
     def _draw_pose(self, frame: np.ndarray, pose: List[float]) -> None:
         """
