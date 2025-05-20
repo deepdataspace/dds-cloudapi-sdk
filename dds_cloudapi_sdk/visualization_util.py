@@ -269,8 +269,15 @@ class ResultVisualizer:
             try:
                 response = requests.get(image_path)
                 response.raise_for_status()
-                img_array = np.array(Image.open(BytesIO(response.content)))
-                img = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
+                # Read image using PIL
+                pil_image = Image.open(BytesIO(response.content))
+                # Ensure image is in RGB mode
+                if pil_image.mode != 'RGB':
+                    pil_image = pil_image.convert('RGB')
+                # Convert to numpy array
+                img = np.array(pil_image)
+                # Convert to BGR format (OpenCV format)
+                img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
             except Exception as e:
                 raise ValueError(f"Failed to read image from URL: {image_path}, error: {str(e)}")
         else:
