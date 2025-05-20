@@ -10,7 +10,6 @@
 ---
 
 <!-- prettier-ignore -->
-
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![PyPI python](https://img.shields.io/pypi/pyversions/dds-cloudapi-sdk)](https://pypi.org/project/dds-cloudapi-sdk)
 [![PyPI version](https://img.shields.io/pypi/v/dds-cloudapi-sdk)](https://pypi.org/project/dds-cloudapi-sdk)
@@ -48,16 +47,13 @@ token = "Your API Token Here"
 config = Config(token)
 client = Client(config)
 
-# 2. Upload local image to the server and get the URL.
-infer_image_url = "https://dds-frontend.oss-accelerate.aliyuncs.com/static_files/playground/grounding_DINO-1.6/02.jpg"
-# infer_image_url = client.upload_file("path/to/infer/image.jpg")  # you can also upload local file for processing
+# 2. Create a task with proper parameters.
+from dds_cloudapi_sdk.tasks.v2_task import V2Task, create_task_with_local_image_auto_resize
 
-# 3. Create a task with proper parameters.
-from dds_cloudapi_sdk.tasks.v2_task import V2Task
-
-task = V2Task(api_path="/v2/task/dinox/detection", api_body={
+api_path = "/v2/task/dinox/detection"
+api_body = {
     "model": "DINO-X-1.0",
-    "image": infer_image_url,
+    # "image": "", # image url or base64 encoded
     "prompt": {
         "type":"text",
         "text":"wolf.dog.butterfly"
@@ -65,19 +61,37 @@ task = V2Task(api_path="/v2/task/dinox/detection", api_body={
     "targets": ["bbox"],
     "bbox_threshold": 0.25,
     "iou_threshold": 0.8
-})
-# task.set_request_timeout(10)  # set the request timeout in seconds，default is 5 seconds
+}
 
-# 4. Run the task.
+# Create task with local image
+# task = create_task_with_local_image_auto_resize(
+#     api_path=api_path,
+#     api_body_without_image=api_body,
+#     image_path="path/to/infer/image.jpg",
+# )
+
+# Create task with image URL
+image_url = "https://dds-frontend.oss-accelerate.aliyuncs.com/static_files/playground/grounding_DINO-1.6/02.jpg"
+api_body["image"] = image_url
+task = V2Task(api_path=api_path, api_body=api_body)
+
+# 3. Run the task.
+# task.set_request_timeout(10)  # set the request timeout in seconds，default is 5 seconds
 client.run_task(task)
 
-# 5. Get the result.
+# 4. Get the result.
 print(task.result)
+
+# 5. Visualize the result to local image.
+# image_path = "path/to/infer/image.jpg" # when using local image
+# image_path = image_url # when using image URL
+# visualize_result(image_path=image_path, result=task.result, output_dir="path/to/output_dir")
 
 ```
 
 ## 3. Apply for an API Token
-Step 1: [Apply for API Quota](https://cloud.deepdataspace.com/apply-token?from=sdk).  
+
+Step 1: [Apply for API Quota](https://cloud.deepdataspace.com/apply-token?from=sdk).
 Step 2: Create projects and get your API token from [here](https://cloud.deepdataspace.com/dashboard/token-key).
 
 ## 4. License

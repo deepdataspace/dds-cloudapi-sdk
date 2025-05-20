@@ -12,8 +12,9 @@ author = "cvr@idea"
 install_requires = [
     "numpy>=1.24.4",
     "pillow>=10.2.0",
-    "pydantic>=2.6.3, <= 3",
     "requests>=2.31.0",
+    "sentry_sdk>=2.28.0",
+    "opencv-python",
 ]
 
 classifiers = [
@@ -50,7 +51,7 @@ def find_packages(pkg_dir: str):
 
 
 setup(name="dds-cloudapi-sdk",
-      version="0.4.1",
+      version="0.5.0",
       description=description,
       long_description=long_description,
       long_description_content_type="text/markdown",

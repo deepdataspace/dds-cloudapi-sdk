@@ -3,8 +3,6 @@ import os
 from typing import Dict
 from typing import List
 from typing import Optional
-from typing import Tuple
-from typing import Union
 from urllib.parse import urlparse
 
 import cv2
