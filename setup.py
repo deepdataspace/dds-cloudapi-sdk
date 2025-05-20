@@ -51,7 +51,7 @@ def find_packages(pkg_dir: str):
 
 
 setup(name="dds-cloudapi-sdk",
-      version="0.5.0",
+      version="0.5.1",
       description=description,
       long_description=long_description,
       long_description_content_type="text/markdown",
