@@ -16,7 +16,6 @@ sentry_sdk.init(
     dsn="https://f05b1518ce3d40c8b41f1483c30c46b6@sentry.cvrgo.com/25",
     send_default_pii=True,
     traces_sample_rate=1.0,
-    debug=True
 )
 
 http_session = requests.Session()
