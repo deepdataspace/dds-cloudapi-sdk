@@ -11,7 +11,7 @@ client = Client(config)
 # 2. Create a task with proper parameters.
 task = create_task_with_local_image_auto_resize(
     api_path="/v2/task/dinox/detection",
-    api_body={
+    api_body_without_image={
         "model": "DINO-X-1.0",
         # "image": infer_image_url, # not needed for local image
         "prompt": {
