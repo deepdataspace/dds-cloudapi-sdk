@@ -1,23 +1,28 @@
-import sentry_sdk
 import abc
 import enum
+import importlib
+import importlib.metadata
 import logging
 import time
 import uuid
 
 import requests
+import sentry_sdk
+from flask import json
 
 from dds_cloudapi_sdk.config import Config
 
 logger = logging.getLogger("dds_cloudapi_sdk")
-
-sentry_sdk.init(
-    server_name="dds_cloudapi_sdk",
-    dsn="https://f05b1518ce3d40c8b41f1483c30c46b6@sentry.cvrgo.com/25",
-    send_default_pii=True,
-    traces_sample_rate=1.0,
-)
-
+if sentry_sdk.get_client() is None or not sentry_sdk.get_client().is_active():
+    sentry_sdk.init(
+        server_name="dds_cloudapi_sdk",
+        dsn="https://f05b1518ce3d40c8b41f1483c30c46b6@sentry.cvrgo.com/25",
+        send_default_pii=True,
+        traces_sample_rate=1.0,
+        release=importlib.metadata.version("dds-cloudapi-sdk"),
+        auto_enabling_integrations=False,
+        in_app_include=["dds_cloudapi_sdk"],
+    )
 http_session = requests.Session()
 
 
@@ -73,7 +78,7 @@ class BaseTask(abc.ABC):
 
     @property
     def trigger_headers(self):
-        return {"Token": self.config.token, "Idempotency-Key": self.trigger_idempotency_key}
+        return {"Token": self.config.token, "Idempotency-Key": self.trigger_idempotency_key, "Content-Type": "application/json"}
 
     @property
     def api_trigger_url(self):
@@ -92,13 +97,17 @@ class BaseTask(abc.ABC):
 
         self.config = config
         self.status = TaskStatus.Triggering
+        payload = json.dumps(self.api_body)
+        
+        sentry_sdk.set_extra("request-size", len(payload))
         rsp = http_session.post(
             self.api_trigger_url,
-            json=self.api_body,
+            data=payload,
             headers=self.trigger_headers,
-            timeout=self._request_timeout)
-
+            timeout=self._request_timeout
+            )
         rsp_json = rsp.json()
+        sentry_sdk.set_extra("response-size", len(rsp.content))
         if rsp_json["code"] != 0:
             raise RuntimeError(f"Failed to trigger {self}, error: {rsp_json['msg']}")
         self.task_uuid = rsp_json["data"]["task_uuid"]
@@ -161,7 +170,10 @@ class BaseTask(abc.ABC):
                 if i < 2:
                     time.sleep(2)
                     continue
+                sentry_sdk.capture_exception(e)
                 raise e
-
+            except Exception as e:
+                sentry_sdk.capture_exception(e)
+                raise
     def __str__(self):
         return f"{self.__class__.__name__}<task_id:{self.task_uuid}, idemp_key:{self.trigger_idempotency_key}>"
