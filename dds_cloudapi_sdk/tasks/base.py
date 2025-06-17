@@ -176,7 +176,7 @@ class BaseTask(abc.ABC):
                 self.wait()
                 return
             except (Retry, requests.exceptions.ReadTimeout) as e:
-                logger.warning(f"Failed to trigger {self}, times: {i+1}")
+                logger.warning(f"Failed to trigger {self}, times: {i+1}, e:{e}")
                 if i < 2:
                     time.sleep(2)
                     continue

@@ -98,11 +98,17 @@ class V2Task(BaseTask):
 
     @property
     def api_trigger_url(self):
-        return f"https://{self.config.endpoint}{self.api_path}"
+        if self.config.endpoint.startswith("http"):
+            return f"{self.config.endpoint}{self.api_path}"
+        else:
+            return f"https://{self.config.endpoint}{self.api_path}"
 
     @property
     def api_check_url(self):
-        return f"https://{self.config.endpoint}/v2/task_status/{self.task_uuid}"
+        if self.config.endpoint.startswith("http"):
+            return f"{self.config.endpoint}/v2/task_status/{self.task_uuid}"
+        else:
+            return f"https://{self.config.endpoint}/v2/task_status/{self.task_uuid}"
 
     @classmethod
     def is_resizable(cls, targets: List[str]) -> bool:
