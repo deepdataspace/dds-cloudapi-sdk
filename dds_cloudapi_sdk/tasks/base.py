@@ -39,6 +39,14 @@ class LabelTypes(enum.Enum):
     Mask = "mask"
 
 
+class ErrCode:
+    Retry = 202001
+
+
+class Retry(Exception):
+    pass
+
+
 class BaseTask(abc.ABC):
 
     _request_timeout = 5
@@ -98,16 +106,18 @@ class BaseTask(abc.ABC):
         self.config = config
         self.status = TaskStatus.Triggering
         payload = json.dumps(self.api_body)
-        
+
         sentry_sdk.set_extra("request-size", len(payload))
         rsp = http_session.post(
             self.api_trigger_url,
             data=payload,
             headers=self.trigger_headers,
             timeout=self._request_timeout
-            )
+        )
         rsp_json = rsp.json()
         sentry_sdk.set_extra("response-size", len(rsp.content))
+        if rsp_json["code"] == ErrCode.Retry:
+            raise Retry(f"Failed to trigger {self}, error: {rsp_json['msg']}")
         if rsp_json["code"] != 0:
             raise RuntimeError(f"Failed to trigger {self}, error: {rsp_json['msg']}")
         self.task_uuid = rsp_json["data"]["task_uuid"]
@@ -165,7 +175,7 @@ class BaseTask(abc.ABC):
                     self.trigger(config)
                 self.wait()
                 return
-            except requests.exceptions.ReadTimeout as e:
+            except (Retry, requests.exceptions.ReadTimeout) as e:
                 logger.warning(f"Failed to trigger {self}, times: {i+1}")
                 if i < 2:
                     time.sleep(2)
@@ -175,5 +185,6 @@ class BaseTask(abc.ABC):
             except Exception as e:
                 sentry_sdk.capture_exception(e)
                 raise
+
     def __str__(self):
         return f"{self.__class__.__name__}<task_id:{self.task_uuid}, idemp_key:{self.trigger_idempotency_key}>"
