@@ -4,12 +4,18 @@ from typing import Dict
 from typing import List
 
 import cv2
+import pycocotools.mask as maskUtils
 
 from dds_cloudapi_sdk.image_resizer import image_to_base64
 from dds_cloudapi_sdk.image_resizer import resize_image
 from dds_cloudapi_sdk.rle_util import mask_to_rle
 from dds_cloudapi_sdk.rle_util import rle_to_array
 from dds_cloudapi_sdk.tasks.base import BaseTask
+
+
+class MaskFormat:
+    DDS_RLE = "dds_rle"
+    COCO_RLE = "coco_rle"
 
 
 class ResizeHelper:
@@ -22,6 +28,10 @@ class ResizeHelper:
         "pose_keypoints",
         "hand_keypoints",
     )
+    SUPPORTED_MASK_FORMATS = (
+        MaskFormat.DDS_RLE,
+        MaskFormat.COCO_RLE,
+    )
 
     def __init__(self, original_width: int, original_height: int, ratio: float):
         self._original_width = original_width
@@ -29,9 +39,14 @@ class ResizeHelper:
         self._ratio = ratio
 
     @classmethod
-    def is_resizable(cls, targets: List[str]) -> bool:
-        return targets and all(target in cls.RESIZE_TARGETS for target in targets)
-        # TODO shijiawei check mask_format
+    def is_resizable(cls, api_body: dict) -> bool:
+        targets = api_body.get('targets')
+        mask_format = api_body.get('mask_format')
+        if targets and any(target not in cls.RESIZE_TARGETS for target in targets):
+            return False
+        if mask_format and mask_format not in cls.SUPPORTED_MASK_FORMATS:
+            return False
+        return True
 
     @classmethod
     def image_max_size(cls, api_path: str) -> int:
@@ -69,6 +84,16 @@ class ResizeHelper:
         return [int(coord / self._ratio) for coord in bbox]
 
     def resize_mask(self, mask: dict) -> dict:
+        mask_format = mask.get('format', MaskFormat.DDS_RLE)
+        if mask_format == MaskFormat.DDS_RLE:
+            return self.resize_dds_rle_mask(mask)
+        elif mask_format == MaskFormat.COCO_RLE:
+            return self.resize_coco_rle_mask(mask)
+        else:
+            logging.error(f"ResizeHelper: Unsupported mask format: {mask_format}")
+            return mask
+
+    def resize_dds_rle_mask(self, mask: dict) -> dict:
         img = rle_to_array(
             mask['counts'],
             mask['size'][0] * mask['size'][1]
@@ -82,7 +107,21 @@ class ResizeHelper:
             'size': [
                 self._original_height,
                 self._original_width
-            ]
+            ],
+            'mask_format': MaskFormat.DDS_RLE,
+        }
+
+    def resize_coco_rle_mask(self, mask: dict) -> dict:
+        img = maskUtils.decode(mask)
+        img = cv2.resize(
+            img,
+            (self._original_width, self._original_height)
+        )
+        rle = maskUtils.encode(img)
+        return {
+            'counts': rle['counts'].decode('utf-8'),
+            'size': rle['size'],
+            'mask_format': MaskFormat.COCO_RLE,
         }
 
     def resize_keypoints(self, keypoints: list) -> list:
@@ -150,7 +189,7 @@ def create_task_with_local_image_auto_resize(
 ) -> V2Task:
     api_body = api_body_without_image or {}
 
-    if ResizeHelper.is_resizable(api_body.get('targets')):
+    if ResizeHelper.is_resizable(api_body):
         max_size = max_size or ResizeHelper.image_max_size(api_path)
         image_data, resize_info = resize_image(image_path, max_size)
         resize_helper = ResizeHelper(**resize_info)
