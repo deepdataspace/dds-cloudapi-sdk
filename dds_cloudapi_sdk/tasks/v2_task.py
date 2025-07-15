@@ -12,42 +12,38 @@ from dds_cloudapi_sdk.rle_util import rle_to_array
 from dds_cloudapi_sdk.tasks.base import BaseTask
 
 
-class V2Task(BaseTask):
-    _api_path = None
-    _api_body = None
-    result = None
-    _resize_info = None
-    resizable_targets = (
+class ResizeHelper:
+    _original_width = None
+    _original_height = None
+    _ratio = None
+    RESIZE_TARGETS = (
         "bbox",
         "mask",
         "pose_keypoints",
         "hand_keypoints",
     )
 
-    def __init__(
-        self,
-        api_path: str,
-        api_body: dict = None,
-        resize_info: dict = None,
-    ):
-        super().__init__()
-        self._api_path = api_path
-        self._api_body = api_body
-        self._resize_info = resize_info
+    def __init__(self, original_width: int, original_height: int, ratio: float):
+        self._original_width = original_width
+        self._original_height = original_height
+        self._ratio = ratio
 
-    @property
-    def api_path(self):
-        return self._api_path
+    @classmethod
+    def is_resizable(cls, targets: List[str]) -> bool:
+        return targets and all(target in cls.RESIZE_TARGETS for target in targets)
+        # TODO shijiawei check mask_format
 
-    @property
-    def api_body(self):
-        return self._api_body or {}
+    @classmethod
+    def image_max_size(cls, api_path: str) -> int:
+        if api_path == "/v2/task/trex/detection":
+            return 1333
+        elif api_path == "/v2/task/application/change_cloth_color":
+            return 2048
+        else:
+            return 1536
 
     def format_result(self, result: dict) -> dict:
         try:
-            if not self._resize_info:
-                return result
-
             logging.debug(f"resize original result: {result}")
             for item in result['objects']:
                 if item.get('bbox'):
@@ -61,13 +57,16 @@ class V2Task(BaseTask):
             return result
         except Exception as e:
             logging.exception(
-                f"Error formatting result: {result}, "
-                f"resize_info: {self._resize_info}, error: {e}"
+                f"Error formatting result: {result}, \n"
+                f"error: {e}\n"
+                f"_original_width: {self._original_width}, \n"
+                f"_original_height: {self._original_height}, \n"
+                f"_ratio: {self._ratio}"
             )
             return result
 
     def resize_bbox(self, bbox: list) -> list:
-        return [int(coord / self._resize_info['ratio']) for coord in bbox]
+        return [int(coord / self._ratio) for coord in bbox]
 
     def resize_mask(self, mask: dict) -> dict:
         img = rle_to_array(
@@ -76,21 +75,53 @@ class V2Task(BaseTask):
         ).reshape(mask['size'])
         img = cv2.resize(
             img,
-            (self._resize_info['original_width'], self._resize_info['original_height'])
+            (self._original_width, self._original_height)
         )
         return {
             'counts': mask_to_rle(img, encode=True),
             'size': [
-                self._resize_info['original_height'],
-                self._resize_info['original_width']
+                self._original_height,
+                self._original_width
             ]
         }
 
     def resize_keypoints(self, keypoints: list) -> list:
         return [
-            int(v / self._resize_info['ratio']) if i % 4 <= 1 else v
+            int(v / self._ratio) if i % 4 <= 1 else v
             for i, v in enumerate(keypoints)
         ]
+
+
+class V2Task(BaseTask):
+    _api_path = None
+    _api_body = None
+    result = None
+    _resize_helper = None
+
+    def __init__(
+        self,
+        api_path: str,
+        api_body: dict = None,
+        resize_helper: ResizeHelper = None,
+    ):
+        super().__init__()
+        self._api_path = api_path
+        self._api_body = api_body
+        self._resize_helper = resize_helper
+
+    @property
+    def api_path(self):
+        return self._api_path
+
+    @property
+    def api_body(self):
+        return self._api_body or {}
+
+    def format_result(self, result: dict) -> dict:
+        if self._resize_helper:
+            return self._resize_helper.format_result(result)
+        else:
+            return result
 
     @property
     def result(self):
@@ -110,19 +141,6 @@ class V2Task(BaseTask):
         else:
             return f"https://{self.config.endpoint}/v2/task_status/{self.task_uuid}"
 
-    @classmethod
-    def is_resizable(cls, targets: List[str]) -> bool:
-        return targets and all(target in cls.resizable_targets for target in targets)
-
-    @classmethod
-    def image_max_size(cls, api_path: str) -> int:
-        if api_path == "/v2/task/trex/detection":
-            return 1333
-        elif api_path == "/v2/task/application/change_cloth_color":
-            return 2048
-        else:
-            return 1536
-
 
 def create_task_with_local_image_auto_resize(
     api_path: str,
@@ -132,12 +150,13 @@ def create_task_with_local_image_auto_resize(
 ) -> V2Task:
     api_body = api_body_without_image or {}
 
-    if V2Task.is_resizable(api_body.get('targets')):
-        max_size = max_size or V2Task.image_max_size(api_path)
+    if ResizeHelper.is_resizable(api_body.get('targets')):
+        max_size = max_size or ResizeHelper.image_max_size(api_path)
         image_data, resize_info = resize_image(image_path, max_size)
+        resize_helper = ResizeHelper(**resize_info)
         api_body['image'] = image_to_base64(image_data)
     else:
         api_body['image'] = image_to_base64(image_path)
-        resize_info = None
+        resize_helper = None
 
-    return V2Task(api_path, api_body, resize_info)
+    return V2Task(api_path, api_body, resize_helper)
