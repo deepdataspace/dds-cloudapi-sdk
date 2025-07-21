@@ -108,7 +108,7 @@ class ResizeHelper:
                 self._original_height,
                 self._original_width
             ],
-            'mask_format': MaskFormat.DDS_RLE,
+            'format': MaskFormat.DDS_RLE,
         }
 
     def resize_coco_rle_mask(self, mask: dict) -> dict:
@@ -121,7 +121,7 @@ class ResizeHelper:
         return {
             'counts': rle['counts'].decode('utf-8'),
             'size': rle['size'],
-            'mask_format': MaskFormat.COCO_RLE,
+            'format': MaskFormat.COCO_RLE,
         }
 
     def resize_keypoints(self, keypoints: list) -> list:

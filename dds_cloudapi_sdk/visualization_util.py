@@ -1,5 +1,6 @@
 import logging
 import os
+from io import BytesIO
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -7,10 +8,10 @@ from urllib.parse import urlparse
 
 import cv2
 import numpy as np
-import supervision as sv
+import pycocotools.mask as maskUtils
 import requests
+import supervision as sv
 from PIL import Image
-from io import BytesIO
 
 from dds_cloudapi_sdk.rle_util import rle_to_array
 
@@ -82,12 +83,19 @@ class ResultVisualizer:
                 continue
             boxes.append(bbox)
             if "mask" in obj:
-                masks.append(
-                    rle_to_array(
-                        obj["mask"]["counts"],
-                        obj["mask"]["size"][0] * obj["mask"]["size"][1]
-                    ).reshape(obj["mask"]["size"])
-                )
+                mask = obj["mask"]
+                mask_format = mask.get('format', 'dds_rle')
+                if mask_format == 'coco_rle':
+                    # Handle COCO RLE format
+                    mask_array = maskUtils.decode(mask)
+                else:
+                    # Handle DDS RLE format (default)
+                    mask_array = rle_to_array(
+                        mask["counts"],
+                        mask["size"][0] * mask["size"][1]
+                    ).reshape(mask["size"])
+
+                masks.append(mask_array)
             self.confidences.append(obj.get("score", 1.0))
             if "category" in obj:
                 cls_name = obj["category"].lower().strip()
