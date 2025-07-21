@@ -4,6 +4,7 @@ from typing import Dict
 from typing import List
 
 import cv2
+import numpy as np
 import pycocotools.mask as maskUtils
 
 from dds_cloudapi_sdk.image_resizer import image_to_base64
@@ -117,7 +118,7 @@ class ResizeHelper:
             img,
             (self._original_width, self._original_height)
         )
-        rle = maskUtils.encode(img)
+        rle = maskUtils.encode(np.asfortranarray(img))
         return {
             'counts': rle['counts'].decode('utf-8'),
             'size': rle['size'],
