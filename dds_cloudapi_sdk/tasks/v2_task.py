@@ -193,7 +193,7 @@ def create_task_with_local_image_auto_resize(
     if ResizeHelper.is_resizable(api_body):
         max_size = max_size or ResizeHelper.image_max_size(api_path)
         image_data, resize_info = resize_image(image_path, max_size)
-        resize_helper = ResizeHelper(**resize_info)
+        resize_helper = ResizeHelper(**resize_info) if resize_info else None
         api_body['image'] = image_to_base64(image_data)
     else:
         api_body['image'] = image_to_base64(image_path)
