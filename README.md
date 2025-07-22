@@ -58,19 +58,25 @@ api_body = {
         "type":"text",
         "text":"wolf.dog.butterfly"
     },
-    "targets": ["bbox"],
+    "targets": ["bbox", "mask"],
     "bbox_threshold": 0.25,
-    "iou_threshold": 0.8
+    "iou_threshold": 0.8,
+    "mask_format": "coco_rle",
 }
 
-# Create task with local image
+# 2.1. Create task with local image auto resized (Recommended: faster processing)
 # task = create_task_with_local_image_auto_resize(
 #     api_path=api_path,
 #     api_body_without_image=api_body,
-#     image_path="path/to/infer/image.jpg",
+#     image_path="local/path/to/infer/image.jpg",
 # )
 
-# Create task with image URL
+# 2.2. Create task with local image
+# from dds_cloudapi_sdk.image_resizer import image_to_base64
+# api_body["image"] = image_to_base64("local/path/to/infer/image.jpg")
+# task = V2Task(api_path=api_path, api_body=api_body)
+
+# 2.3. Create task with image URL
 image_url = "https://dds-frontend.oss-accelerate.aliyuncs.com/static_files/playground/grounding_DINO-1.6/02.jpg"
 api_body["image"] = image_url
 task = V2Task(api_path=api_path, api_body=api_body)
@@ -83,7 +89,7 @@ client.run_task(task)
 print(task.result)
 
 # 5. Visualize the result to local image.
-# image_path = "path/to/infer/image.jpg" # when using local image
+# image_path = "local/path/to/infer/image.jpg" # when using local image
 # image_path = image_url # when using image URL
 # visualize_result(image_path=image_path, result=task.result, output_dir="path/to/output_dir")
 
