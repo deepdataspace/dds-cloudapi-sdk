@@ -5,6 +5,7 @@ import requests
 
 from dds_cloudapi_sdk import Client
 from dds_cloudapi_sdk import Config
+from dds_cloudapi_sdk.image_resizer import image_to_base64
 from dds_cloudapi_sdk.tasks.v2_task import V2Task
 from dds_cloudapi_sdk.tasks.v2_task import create_task_with_local_image_auto_resize
 from dds_cloudapi_sdk.visualization_util import visualize_result
@@ -136,9 +137,35 @@ def test_v2_dinox_detection_local_image_scale():
             },
             "targets": ["bbox", "mask", "pose_keypoints", "hand_keypoints"],
             "bbox_threshold": 0.25,
-            "iou_threshold": 0.8
+            "iou_threshold": 0.8,
+            "mask_format": "coco_rle"
         },
         image_path=image_path, max_size=1333
+    )
+    client.run_task(task)
+    print(task.task_uuid, task.status)
+    # print(task.result)
+    visualize_result(image_path=image_path, result=task.result, output_dir=output_dir)
+    return task
+
+
+def test_v2_dinox_detection_local_image():
+    image_path = "images/333.jpg"
+    output_dir = "images/333_output"
+    task = V2Task(
+        api_path="/v2/task/dinox/detection",
+        api_body={
+            "image": image_to_base64(image_path),
+            "model": "DINO-X-1.0",
+            "prompt": {
+                "type": "text",
+                "text": "person.hand"
+            },
+            "targets": ["bbox", "mask", "pose_keypoints", "hand_keypoints"],
+            "bbox_threshold": 0.25,
+            "iou_threshold": 0.8,
+            "mask_format": "coco_rle"
+        },
     )
     client.run_task(task)
     print(task.task_uuid, task.status)
