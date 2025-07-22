@@ -16,7 +16,7 @@ def _open_image(image_input: Union[str, bytes, BytesIO]) -> Image.Image:
 def _save_to_bytesio(img: Image.Image) -> BytesIO:
     """Save image to BytesIO object"""
     output = BytesIO()
-    format = img.format or 'JPEG'
+    format = img.format or 'PNG'
 
     if img.mode not in ('RGB', 'L'):
         img = img.convert('RGB')
