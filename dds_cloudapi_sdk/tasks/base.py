@@ -2,13 +2,13 @@ import abc
 import enum
 import importlib
 import importlib.metadata
+import json
 import logging
 import time
 import uuid
 
 import requests
 import sentry_sdk
-from flask import json
 
 from dds_cloudapi_sdk.config import Config
 
